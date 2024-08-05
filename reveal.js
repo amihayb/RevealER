@@ -334,7 +334,8 @@ fileSelector.addEventListener('change', (event) => {
     .target.files;
   console.log(fileList);
   for (const file of fileList) {
-    readFile(file);
+    //readFile(file);
+    alert('So far it is just a demo.\nChoose tests on the left to see what is what.\n\nAmihay Blau');
   }
 });
 
