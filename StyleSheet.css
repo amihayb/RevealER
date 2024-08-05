@@ -1,0 +1,234 @@
+body {
+    font-family: "Lato", sans-serif;
+    margin: 0;
+  }
+
+  #file-selector {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+  }
+
+  span {
+    position: relative;
+  }
+
+  .button {
+    background-color: #f7faff;
+    border: none;
+    color: white;
+    padding: 20px;
+    text-align: left;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 10px 10px;
+    border-radius: 12px;
+  }
+
+  .headImg {
+    padding: 6px 20px;
+    width: 230px;
+  }
+
+  .image {
+    width: 100%; /* sets the width of the image to the width of the parent container */
+    max-width: 540px; /* sets the maximum width of the image to 300px */
+  }
+
+  .topnav {
+    width: 100%;
+    background-color: #ebf0f8;
+    display: flex;
+    align-items: center;
+    color: #344563;
+  }
+  
+  .topnav a , .topnav span , .topnav custom-file-upload{
+    float: left;
+    color: #344563;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+    font-size: 24px;
+    cursor: pointer;
+    border-radius: 12px
+  }
+
+  .topnav a:hover, span:hover {
+    background-color: #f7faff;
+    color: #202124;
+  }
+
+  .topnav input {
+    text-align: left;
+    width: 70%;
+    font-size: 17px;
+  }
+
+  .sidenav {
+    height: 100%;
+    width: 260px;
+    position: fixed;
+    z-index: 1;
+    top: 30;
+    left: 0;
+    color: #344563;
+    background-color: #f7faff;
+    overflow-x: hidden;
+    padding-top: 5px;
+    padding-bottom: 5px;
+  }
+  
+  .sidenav a {
+    padding: 6px 6px 6px 6px;
+    text-decoration: none;
+    font-size: 25px;
+    color: #344563;
+    display: block;
+  }
+  
+  .sidenav a:hover {
+    background-color: #ebf0f8;
+    color: #202124;
+  }
+  .sidenav h1{
+    text-align: center;
+  }
+  .sidenav h2{
+    text-align: center;
+  }
+  .sidenav select{
+    width: 77%;
+  }
+
+  .checkboxesPlace {
+    max-height: 80%;
+    position: relative;
+    overflow-y: auto;
+  }
+
+  #explenation_text {
+    margin-left: 300px; /* Same as the width of the sidenav */
+    margin-top: 40px;
+    font-size: 18px; /* Increased text to enable scrolling */
+    padding: 0px 10px;
+    line-height: 27px
+  }
+  
+  .plot {
+    margin-left: 260px; /* Same as the width of the sidenav */
+    font-size: 28px; /* Increased text to enable scrolling */
+    padding: 0px 0px;
+  }
+  
+  @media screen and (max-height: 750px) {
+    .sidenav {padding-top: 15px;}
+    .sidenav a {font-size: 18px;}
+  }
+  
+  /* The container */
+  .container {
+    display: block;
+    position: relative;
+    padding-left: 35px;
+    margin-bottom: 12px;
+    cursor: pointer;
+    font-size: 22px;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+    
+  /* Create a custom checkbox */
+  .checkmark {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 25px;
+    width: 25px;
+    background-color: #eee;
+  }
+  
+  /* On mouse-over, add a grey background color */
+  .container:hover input ~ .checkmark {
+    background-color: #ccc;
+  }
+  
+  /* When the checkbox is checked, add a blue background */
+  .container input:checked ~ .checkmark {
+    background-color: #2196F3;
+  }
+  
+  /* Create the checkmark/indicator (hidden when not checked) */
+  .checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+  }
+  
+  /* Show the checkmark when checked */
+  .container input:checked ~ .checkmark:after {
+    display: block;
+  }
+  
+  /* Style the checkmark/indicator */
+  .container .checkmark:after {
+    left: 9px;
+    top: 5px;
+    width: 5px;
+    height: 10px;
+    border: solid white;
+    border-width: 0 3px 3px 0;
+    -webkit-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    transform: rotate(45deg);
+  }
+
+  .context-menu {
+    display: none;
+    position: absolute;
+    z-index: 10;
+    padding: 12px 0;
+    width: 240px;
+    background-color: #fff;
+    border: solid 1px #dfdfdf;
+    box-shadow: 1px 1px 2px #cfcfcf;
+}
+
+.context-menu--active {
+    display: block;
+}
+
+.context-menu__items {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.context-menu__item {
+    display: block;
+    margin-bottom: 4px;
+}
+
+.context-menu__item:last-child {
+    margin-bottom: 0;
+}
+
+.context-menu__link {
+    display: block;
+    padding: 4px 12px;
+    color: #0066aa;
+    text-decoration: none;
+}
+
+.context-menu__link:hover {
+    color: #fff;
+    background-color: #0066aa;
+}
