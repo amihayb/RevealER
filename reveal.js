@@ -36,12 +36,14 @@ function replacePic(newPicTag) {
   sources[1].srcset = newPicTag;
   sources[2].srcset = newPicTag;
   img.onload = function () {
-    img.width = img.naturalWidth;
-    img.height = img.naturalHeight;
+    img.width = img.naturalWidth*1.5;
+    img.height = img.naturalHeight*1.5;
     console.log(`Image width set to: ${img.width}px`);
   };
   console.log("switched");
 }
+
+
 
 function replaceText(textTag) {
 
@@ -78,6 +80,28 @@ function replaceText(textTag) {
   
   document.getElementById("explenation_label").innerHTML = text2write;
 }
+
+
+let previousLink = null;
+
+document.querySelectorAll('.button').forEach(link => {
+    link.addEventListener('click', function(event) {
+        event.preventDefault(); // Prevent the default link behavior
+
+        // Reset the previous link's color
+        if (previousLink) {
+            previousLink.classList.remove('active');
+        }
+
+        // Set the current link's color
+        this.classList.add('active');
+
+        // Update the previous link
+        previousLink = this;
+    });
+});
+
+
 
 function GyroCheck() {
   cleanUp();

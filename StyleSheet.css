@@ -1,6 +1,7 @@
 body {
     font-family: "Lato", sans-serif;
-    margin: 0;
+    margin-top: 0;
+    padding-top: 40px;
   }
 
   #file-selector {
@@ -31,6 +32,10 @@ body {
     border-radius: 12px;
   }
 
+  .button.active {
+    background-color: #c9dbf9;
+  }
+
   .headImg {
     padding: 6px 20px;
     width: 230px;
@@ -43,10 +48,16 @@ body {
 
   .topnav {
     width: 100%;
+    left: 0;
+    top: 0;
+    position: fixed;
     background-color: #ebf0f8;
     display: flex;
     align-items: center;
     color: #344563;
+    overflow: hidden;
+    z-index: 10; /* Ensure topnav is above sidenav */
+    box-shadow: 2px 0 5px rgba(0,0,0,0.5); /* Add shadow */;
   }
   
   .topnav a , .topnav span , .topnav custom-file-upload{
@@ -60,8 +71,18 @@ body {
     border-radius: 12px
   }
 
+  .topnav img {
+    cursor: pointer;
+  }
+
+  #LogoBlau {
+    margin-left: auto;
+    margin-right: 20px; /* Add padding from the right edge */
+
+  }
+
   .topnav a:hover, span:hover {
-    background-color: #f7faff;
+    background-color: #c9dbf9;
     color: #202124;
   }
 
@@ -83,6 +104,9 @@ body {
     overflow-x: hidden;
     padding-top: 5px;
     padding-bottom: 5px;
+    z-index: 5; /* Ensure sidenav is below topnav */
+    padding-top: 30px; /* Adjust padding to avoid overlap with topnav */
+    box-shadow: 2px 0 5px rgba(0,0,0,0.5); /* Add shadow */
   }
   
   .sidenav a {
@@ -94,7 +118,7 @@ body {
   }
   
   .sidenav a:hover {
-    background-color: #ebf0f8;
+    background-color: #c9dbf9;
     color: #202124;
   }
   .sidenav h1{
@@ -114,6 +138,7 @@ body {
   }
 
   #explenation_text {
+    top: 100;
     margin-left: 300px; /* Same as the width of the sidenav */
     margin-top: 40px;
     font-size: 18px; /* Increased text to enable scrolling */
@@ -121,8 +146,15 @@ body {
     line-height: 27px
   }
   
+  .explenation_text{
+    margin-top: 500px; /* Adjust this value based on the height of your topnav */
+    padding: 20px;
+    margin-left: 250px; /* Adjust this value based on the width of your sidenav */
+  }
+
   .plot {
     margin-left: 260px; /* Same as the width of the sidenav */
+    margin-top: 100px; /* Same as the width of the sidenav */
     font-size: 28px; /* Increased text to enable scrolling */
     padding: 0px 0px;
   }

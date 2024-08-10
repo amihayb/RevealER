@@ -23,25 +23,18 @@
 
 <body>
   <div class="topnav" id="topnav" margin-left="260px" padding="0px 10px">
-    <img src="images/RafLogo.svg" alt="Rafael logo" class="headImg">
-    <a margin-left="260px" href="" title="Reveal"><i class="fa fa-home"></i></a>
+    <img src="images/RafLogo.svg" alt="Rafael logo" class="headImg" onclick="window.location.href=''">
     <span><i class="fa fa-folder-open" title="Open File"></i>
       <input id="file-selector" type="file" />
     </span>
     <a onclick="export2csv()" title="Export to CSV"><i class="fa fa-save"></i></a>
     <a onclick="cutToZoom()" title="Cut to Zoomed Area"><i class="fa fa-cut"></i></a>
-    <a onclick="relativeTime()" title="Relative Time"><i class="fa fa-history"></i></a>
     <a onclick="markDataTips()" title="Data Tips"><i class="fa fa-map-marker"></i></a>
     <a onclick="showStat()" title="Show Statistics"><i class="fa fa-list-ol"></i></a>
     <a onclick="alert('Hope I helped you understand your data.\nFor support, contact me:\nAmihay Blau\nmail: amihay@blau-eng.co.il\nPhone: +972-54-6668902');" title="Show Statistics"><i class="fa fa-info-circle"></i></a>
-    <a href="#example" onclick="showExample()">Example File</a>
+    <img onclick="alert('Hope I helped you understand your data.\nFor support, contact me:\nAmihay Blau\nmail: amihay@blau-eng.co.il\nPhone: +972-54-6668902');" 
+			height="36" src="images/logo-title.svg" alt="Blau Robotics" id="LogoBlau">
   </div>
-
-  <div class="topnav" id="labelsNavBar" style="display: none;">
-    <a>Labels: </a>
-    <input name="labelsInput" id="labelsInput">
-  </div>
-
   <div class="sidenav" id="sidenav">
     <a href="#" class="button"  onclick="replacePic('images/show_sensors.png'); replaceText('ShowSensors');">Show Sensors</a>
     <a href="#" class="button"  onclick="replacePic('images/jump2EOD.png'); replaceText('jump2EOD');">Enslave to EOD</a>
@@ -71,53 +64,7 @@
   </div>
   <div class="plot" id="plot">
   </div>
-  <nav id="context-menu" class="context-menu">
-    <ul class="context-menu__items">
-      <li class="context-menu__item">
-        <a href="#" class="context-menu__link" data-action="Rename"><i class="context-menu-action"></i> Rename</a>
-      </li>
-      <li class="context-menu__item">
-        <a href="#" class="context-menu__link" data-action="Mult"><i class="context-menu-action"></i> Multiply</a>
-      </li>
-      <li class="context-menu__item">
-        <a href="#" class="context-menu__link" data-action="Diff"><i class="context-menu-action"></i> Diff.</a>
-      </li>
-      <li class="context-menu__item">
-        <a href="#" class="context-menu__link" data-action="Integrate"><i class="context-menu-action"></i> Integrate</a>
-      </li>
-      <li class="context-menu__item">
-        <a href="#" class="context-menu__link" data-action="filter"><i class="context-menu-action"></i> Filter Signal</a>
-      </li>
-      <li class="context-menu__item">
-        <a href="#" class="context-menu__link" data-action="Detrend"><i class="context-menu-action"></i> Detrend</a>
-      </li>
-      <li class="context-menu__item">
-        <a href="#" class="context-menu__link" data-action="removeFirst"><i class="context-menu-action"></i> Remove
-          First</a>
-      </li>
-      <li class="context-menu__item">
-        <a href="#" class="context-menu__link" data-action="removeMean"><i class="context-menu-action"></i> Remove
-          Mean</a>
-      </li>
-      <li class="context-menu__item">
-        <a href="#" class="context-menu__link" data-action="fixAngle"><i class="context-menu-action"></i> Smooth
-          Angles</a>
-      </li>
-      <li class="context-menu__item">
-        <a href="#" class="context-menu__link" data-action="cutToZoom"><i class="context-menu-action"></i> Cut to Zoomed
-          Area</a>
-      </li>
-      <li class="context-menu__item">
-        <a href="#" class="context-menu__link" data-action="dataTips"><i class="context-menu-action"></i> Data Tips</a>
-      </li>
-      <li class="context-menu__item">
-        <a href="#" class="context-menu__link" data-action="showStat"><i class="context-menu-action"></i> Show
-          Statistics</a>
-      </li>
-    </ul>
-  </nav>
   <script src="reveal.js"></script>
-  <script src="context.js"></script>
 </body>
 
 </html>
