@@ -37,12 +37,15 @@
   </div>
   <div class="sidenav" id="sidenav">
     <a href="#" class="button"  onclick="replacePic('images/show_sensors.png'); replaceText('ShowSensors');">Show Sensors</a>
-    <a href="#" class="button"  onclick="replacePic('images/jump2EOD.png'); replaceText('jump2EOD');">Enslave to EOD</a>
-    <a href="#" class="button"  onclick="replacePic('images/eod_cross.png'); replaceText('eod_cross');">Slave to EOD</a>
-    <a href="#" class="button"  onclick="replacePic('images/slv2eod_tr.png'); replaceText('slv2eod_tr');">TR Movement Range</a>
-    <a href="#" class="button"  onclick="replacePic('images/slv2eod_el.png'); replaceText('slv2eod_el');">EL Movement Range</a>
-    <a href="#" class="button"  onclick="replacePic('images/msl_cross.png'); replaceText('msl_cross');">Slave to Missile</a>
-    <a href="#" class="button"  onclick="replacePic('images/msl_squint.png'); replaceText('msl_squint');">Sector Limits Squint</a>
+    <!-- <a href="#" class="button"  onclick="replacePic('images/jump2EOD.png'); replaceText('jump2EOD');">Enslave to EOD</a> -->
+    <a href="#" class="button"  onclick="jump2EOD();">Enslave to EOD</a>
+    <a href="#" class="button"  onclick="eod_cross();">Slave to EOD</a>
+    <a href="#" class="button"  onclick="slv2eod_moveRange();">TR Movement Range</a>
+    <a href="#" class="button"  onclick="slv2eod_moveRange();">EL Movement Range</a>
+    <a href="#" class="button"  onclick="slv2msl_cross();">Slave to Missile</a>
+    <a href="#" class="button"  onclick="slv2msl_squint();">Sector Limits Squint</a>
+    <a href="#" class="button"  onclick="replacePic('images/msl_squint.png'); replaceText('msl_squint');">EOD & Missile Handshake</a>
+    <a href="#" class="button"  onclick="checkBits();">Check Bits</a>
     <div id="xaxis_dropdown"></div>
     <div class="checkboxesPlace" id="checkboxesPlace"></div>
   </div>

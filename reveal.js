@@ -36,13 +36,12 @@ function replacePic(newPicTag) {
   sources[1].srcset = newPicTag;
   sources[2].srcset = newPicTag;
   img.onload = function () {
-    img.width = img.naturalWidth*1.5;
-    img.height = img.naturalHeight*1.5;
+    img.width = img.naturalWidth * 1.5;
+    img.height = img.naturalHeight * 1.5;
     console.log(`Image width set to: ${img.width}px`);
   };
   console.log("switched");
 }
-
 
 
 function replaceText(textTag) {
@@ -53,56 +52,198 @@ function replaceText(textTag) {
       text2write = "<strong>Show Sensors</strong><br>Show Padestal, EOD & Missile sensors.";
       break;
 
-      case "jump2EOD":
+    case "jump2EOD":
       text2write = "<strong>Padestal Jump to EOD</strong><br>Start slave to EOD.<br>Test if the padestal aims on EOD target.";
       break;
 
-      case "eod_cross":
+    case "eod_cross":
       text2write = "<strong>Slave to EOD</strong><br>Test padestal movement at Slave to EOD";
       break;
 
-      case "slv2eod_tr":
+    case "slv2eod_tr":
       text2write = "<strong>Slave to EOD: Traverse Movement Range</strong><br>Test padestal full movement range on traverse including:<ul><li>Movement somoothness</li><li>Sector limits behaviour</li><li>Passing 0 and 180 deg angles</li></ul>";
       break;
 
-      case "slv2eod_el":
+    case "slv2eod_el":
       text2write = "<strong>Slave to EOD: Elevation Movement Range</strong><br>Test padestal full movement range on elevation including:<ul><li>Movement somoothness</li><li>Sector limits behaviour</li></ul>";
       break;
 
-      case "msl_cross":
+    case "msl_cross":
       text2write = "<strong>Slave to Missile</strong><br>Test padestal movement at Slave to Missile";
       break;
 
-      case "msl_squint":
+    case "msl_squint":
       text2write = "<strong>Missile Squint at Sector Limits</strong><br>Test missile and padestal behaviour ay sector limits.<br>The padestal should wait at sector limits as the missile eye squints into the movement prohibited zone.";
       break;
   }
-  
+
   document.getElementById("explenation_label").innerHTML = text2write;
 }
 
 
+// Set pressed button color to active
 let previousLink = null;
 
 document.querySelectorAll('.button').forEach(link => {
-    link.addEventListener('click', function(event) {
-        event.preventDefault(); // Prevent the default link behavior
+  link.addEventListener('click', function (event) {
+    event.preventDefault(); // Prevent the default link behavior
 
-        // Reset the previous link's color
-        if (previousLink) {
-            previousLink.classList.remove('active');
-        }
+    // Reset the previous link's color
+    if (previousLink) {
+      previousLink.classList.remove('active');
+    }
 
-        // Set the current link's color
-        this.classList.add('active');
+    // Set the current link's color
+    this.classList.add('active');
 
-        // Update the previous link
-        previousLink = this;
-    });
+    // Update the previous link
+    previousLink = this;
+  });
 });
+// End of Set pressed button color to active
+
+function jump2EOD() {
+  cleanUp();
+
+  /*rows["padestalAimCmdTr"] = rows["outAimingAlgDebugOutfSpare5"];
+  rows["padestalAimCmdEl"] = plus( rows["outAimingAlgDebugOutfSpare6"], 15*d2r );
+
+  rows["padestalAimErrTr"] = minusArrays(rows["outAimingAlgDebugOutfSpare5"], rows["inWS_SensorsstResolversfPsi"]);
+  rows["padestalAimErrEl"] = plus( minusArrays(rows["outAimingAlgDebugOutfSpare6"], rows["inWS_SensorsstResolversfTheta"]), 15*d2r);*/
+
+  traces = [];
+  // Position EOD & Padestal
+  // traces.push(addLine("inEodSensstEodAngles_RangestAnglesfPsi", 1, 1, r2d));
+  traces.push(addLine("padestalAimCmdTr", 1, 1, r2d));
+  traces.push(addLine("inWS_SensorsstResolversfPsi", 1, 1, r2d));
+  // traces.push(addLine("inEodSensstEodAngles_RangestAnglesfTheta", 1, 2, r2d));
+  traces.push(addLine("padestalAimCmdEl", 1, 2, r2d));
+  traces.push(addLine("inWS_SensorsstResolversfTheta", 1, 2, r2d));
+
+  // Rate command to padestal
+  traces.push(addLine("outWsCmdstTraversePosCmd", 2, 1, r2d));
+  traces.push(addLine("outWsCmdstElevationPosCmd", 2, 2, r2d));
+
+  // Aim Error
+  traces.push(addLine("padestalAimErrTr", 3, 1, r2d));
+  traces.push(addLine("padestalAimErrEl", 3, 2, r2d));
+
+  plotTraces(traces, 3, 2);
+}
+
+
+function eod_cross() {
+  cleanUp();
+  
+  traces = [];
+  // Position EOD & Padestal
+  traces.push(addLine("inEodSensstEodAngles_RangestAnglesfPsi", 1, 1, r2d));
+  traces.push(addLine("padestalAimCmdTr", 1, 1, r2d));
+  traces.push(addLine("inWS_SensorsstResolversfPsi", 1, 1, r2d));
+  traces.push(addLine("inEodSensstEodAngles_RangestAnglesfTheta", 1, 2, r2d));
+  traces.push(addLine("padestalAimCmdEl", 1, 2, r2d));
+  traces.push(addLine("inWS_SensorsstResolversfTheta", 1, 2, r2d));
+
+  // Rate command to padestal
+  traces.push(addLine("outWsCmdstTraversePosCmd", 2, 1, r2d));
+  traces.push(addLine("outWsCmdstElevationPosCmd", 2, 2, r2d));
+
+  // Missile Eye
+  traces.push(addLine("inLEUfMissile_RelAngle_Tr_M", 3, 1, r2d));
+  traces.push(addLine("inLEUfMissile_RelAngle_El_M", 3, 2, r2d));
+
+  plotTraces(traces, 3, 2);
+}
 
 
 
+function slv2eod_moveRange(){
+  cleanUp();
+  
+  limTr = [maxNegative(rows["inWS_SensorsstResolversfPsi"]), minPositive(rows["inWS_SensorsstResolversfPsi"])];
+  limEl = [Math.min(...rows["inWS_SensorsstResolversfTheta"]), Math.max(...rows["inWS_SensorsstResolversfTheta"])]
+  console.log(limTr);
+  console.log(limEl);
+
+  traces = [];
+  // Position EOD & Padestal
+  traces.push(addLine("padestalAimCmdTr", 1, 1, r2d));
+  traces.push(addLine("inWS_SensorsstResolversfPsi", 1, 1, r2d));
+  traces.push(addLine("padestalAimCmdEl", 1, 2, r2d));
+  traces.push(addLine("inWS_SensorsstResolversfTheta", 1, 2, r2d));
+  
+  traces.push(addLimitLine(1, 1, r2d*limTr[0]));
+  traces.push(addLimitLine(1, 1, r2d*limTr[1]));
+  traces.push(addLimitLine(1, 2, r2d*limEl[0]));
+  traces.push(addLimitLine(1, 2, r2d*limEl[1]));
+
+  plotTraces(traces, 1,2);
+}
+
+
+function slv2msl_cross() {
+  cleanUp();
+  
+  traces = [];
+  // Missile Eye
+  traces.push(addLine("inLEUfMissile_RelAngle_Tr_M", 1, 1, r2d));
+  traces.push(addLine("inLEUfMissile_RelAngle_El_M", 1, 2, r2d));
+  traces.push(addLine("CpCmd_Tr", 1, 1, r2d));
+  traces.push(addLine("CpCmd_El", 1, 2, r2d));
+
+  // Position EOD & Padestal
+  traces.push(addLine("inWS_SensorsstResolversfPsi", 2, 1, r2d));
+  traces.push(addLine("inWS_SensorsstResolversfTheta", 2, 2, r2d));
+
+  plotTraces(traces, 2, 2);
+}
+
+function slv2msl_squint() {
+  cleanUp();
+
+  limTr = [maxNegative(rows["inWS_SensorsstResolversfPsi"]), minPositive(rows["inWS_SensorsstResolversfPsi"])];
+  limEl = [Math.min(...rows["inWS_SensorsstResolversfTheta"]), Math.max(...rows["inWS_SensorsstResolversfTheta"])]
+  console.log(limTr);
+  console.log(limEl);
+  
+  traces = [];
+  // Missile Eye
+  traces.push(addLine("inLEUfMissile_RelAngle_Tr_M", 1, 1, r2d));
+  traces.push(addLine("inLEUfMissile_RelAngle_El_M", 1, 2, r2d));
+  traces.push(addLine("CpCmd_Tr", 1, 1, r2d));
+  traces.push(addLine("CpCmd_El", 1, 2, r2d));
+
+  // Position EOD & Padestal
+  traces.push(addLine("inWS_SensorsstResolversfPsi", 2, 1, r2d));
+  traces.push(addLine("inWS_SensorsstResolversfTheta", 2, 2, r2d));
+
+  traces.push(addLimitLine(2, 1, r2d*limTr[0]));
+  traces.push(addLimitLine(2, 1, r2d*limTr[1]));
+  traces.push(addLimitLine(2, 2, r2d*limEl[0]));
+  traces.push(addLimitLine(2, 2, r2d*limEl[1]));
+
+  plotTraces(traces, 2, 2);
+}
+
+
+function checkBits() {
+  cleanUp();
+
+  traces = [];
+  // Missile Eye
+  traces.push(addLine("outWsCmdstTraversePosCmd", 1, 1, r2d));
+  traces.push(addLine("outWsCmdstElevationPosCmd", 1, 2, r2d));
+  traces.push(addLine("outBITAimError_TR", 2, 1));
+  traces.push(addLine("outBITAimError_EL", 2, 2));
+  traces.push(addLine("outBITNoMovement_TR", 3, 1));
+  traces.push(addLine("outBITNoMovement_EL", 3, 2));
+  traces.push(addLine("outPosCmdValid", 4, 1));
+  traces.push(addLine("outPosCmdValid", 4, 2));
+
+  plotTraces(traces, 4, 2);
+}
+
+// Old polts functions
 function GyroCheck() {
   cleanUp();
   traces = [];
@@ -144,12 +285,12 @@ function Backlash() {
 
   let lim = 5;
   traces = [];
-  traces.push(addLine("Tr_Angle", 1,1,1000));
-  traces.push(addLine("El_Angle", 2,1,1000));
-  traces.push(addLimitLine(1,1,lim));
-  traces.push(addLimitLine(1,1,-lim));
-  traces.push(addLimitLine(2,1,lim));
-  traces.push(addLimitLine(2,1,-lim));
+  traces.push(addLine("Tr_Angle", 1, 1, 1000));
+  traces.push(addLine("El_Angle", 2, 1, 1000));
+  traces.push(addLimitLine(1, 1, lim));
+  traces.push(addLimitLine(1, 1, -lim));
+  traces.push(addLimitLine(2, 1, lim));
+  traces.push(addLimitLine(2, 1, -lim));
 
   plotTraces(traces);
 }
@@ -220,7 +361,7 @@ function addLine(vName, ax_y = 1, ax_x = 1, factor = 1, showName, showLeg = true
   let x = [];
   let y = [];
 
-  var x_axis = "Time";
+  var x_axis = "time";
   x = rows[x_axis];
   y = mult(rows[vName], factor);
   var trace = {
@@ -246,7 +387,7 @@ function addLine(vName, ax_y = 1, ax_x = 1, factor = 1, showName, showLeg = true
 function addLimitLine(ax_y = 1, ax_x = 1, val) {
 
   var lim1 = {
-    x: [window.rows["Time"][0], window.rows["Time"].slice(-1)[0]],
+    x: [window.rows["time"][0], window.rows["time"].slice(-1)[0]],
     y: [val, val],
     xaxis: 'x' + ax_x,
     yaxis: 'y' + ax_y,
@@ -292,9 +433,11 @@ function plotTraces(traces, sp_r = 2, sp_c = 1) {
       columns: sp_c,
       pattern: 'coupled',
     },
+    yaxis: {title: 'Y Axis 1'},
+    yaxis2: {title: 'Y Axis 2'},
     annotation: [
       {
-        xref: 'paper', 
+        xref: 'paper',
         yref: 'paper',
         x: 0,
         xanchor: 'right',
@@ -304,6 +447,7 @@ function plotTraces(traces, sp_r = 2, sp_c = 1) {
         showarrow: false
       }
     ],
+    showlegend: false
   };
 
   //https://plot.ly/javascript/configuration-options/
@@ -358,29 +502,15 @@ fileSelector.addEventListener('change', (event) => {
     .target.files;
   console.log(fileList);
   for (const file of fileList) {
-    //readFile(file);
-    alert('So far it is just a demo.\nChoose tests on the left to see what is what.\n\nAmihay Blau');
+    readFile(file);
+    // alert('So far it is just a demo.\nChoose tests on the left to see what is what.\n\nAmihay Blau');
   }
 });
 
-function showExample() {
-
-  //loadFileFromURL
-  file = File;
-  file.name = "./PedestalLightTelemetry_17_01_2023__17_25_39.dat";
-  readFile(file);
-  //readFile("./PedestalLightTelemetry_17_01_2023__17_25_39.dat");
-
-}
-
 
 function readFile(file) {
-  console.log(file);
-  this.fileName = file.name.split('.')[0];
-  if (file.name.split('.').pop() == 'dat') { // Read binary file
-    readBinFile(file);
-    return;
-  }
+  //console.log(file);
+
   const reader = new FileReader();
   reader.addEventListener('load', (event) => {
     ttt = Plotly.d3.text(event.target.result, function (text) {
@@ -400,35 +530,9 @@ function readFile(file) {
           }
         }
       }
-      try {
-        document.getElementById("explenation_text").innerHTML = "Record loaded succesfully!<br>Select relevant test";
-      } catch (error) { };
-      /*try {
-        cleanUp();
-      } catch (error) { };*/
-
-      return;
-
-      addDropdown(header);
-      header.forEach(addCheckbox);
-      if (isEcopiaHeader(headerObj.header))
-        setEcopiaRec();
-
-      var t1 = addLine("OUTPUT", 1, rows);
-      var t2 = addLine("ENCODERS_DIFF", 1, rows);
-      data = [t1, t2];
-      var layout = {
-        grid: {
-          rows: 2,
-          columns: 1,
-          pattern: 'coupled',
-          roworder: 'bottom to top'
-        }
-      };
-
-      Plotly.newPlot('plot', data, layout, { editable: true });
 
       //processData(rows);
+      processData();
       window.rows = rows;
       //return nums;
     });
@@ -444,11 +548,17 @@ function readFile(file) {
     function getHeader(resultlines) {
 
       headerObj = {
-        header: ["TIME", "PITCH", "ROLL", "YAW", "YAW_CALIBRATION_OFFSET", "ACCEL_X", "ACCEL_Y", "ACCEL_Z", "PWM_LEFT", "PWM_RIGHT", "ENCODER_LEFT", "DIRECTION_LEFT", "ENCODER_RIGHT", "DIRECTION_RIGHT", "CURRENT_LEFT", "CURRENT_RIGHT", "CURRENT_MF", "CURRENT_MAGNET", "SENSOR_LEFT", "SENSOR_RIGHT", "BATTERY", "GAP_DETECT"],
-        startIdx: 0
+        header: ['time', 'inCalibProcess', 'inEnslaverUnit', 'inMissileCmdInvalid', 'inMissileNumber', 'inAimCorrfPsi', 'inAimCorrfTheta', 'inBorsightCorrectionfPsi', 'inBorsightCorrectionfTheta', 
+          'inEodSensstEodAngles_RangefRange', 'inEodSensstEodAngles_RangestAnglesfPsi', 'inEodSensstEodAngles_RangestAnglesfTheta', 'inEodSensstGyrofPsi', 'inEodSensstGyrofTheta', 
+          'inKFSignalsIsFirstRange', 'inKFSignalsIsFreshData', 'inKFSignalsIsFreshRange', 'inKFSignalsRangeSource', 'inLEUfMissile_RelAngle_El_M', 'inLEUfMissile_RelAngle_Tr_M', 
+          'inWS_SensorsstGyrofPsi', 'inWS_SensorsstGyrofTheta', 'inWS_SensorsstResolversfPsi', 'inWS_SensorsstResolversfTheta', 'outMissileActivationBit', 'outPosCmdValid', 
+          'outAimingAlgDebugOutfSpare1', 'outAimingAlgDebugOutfSpare2', 'outAimingAlgDebugOutfSpare3', 'outAimingAlgDebugOutfSpare4', 'outAimingAlgDebugOutfSpare5', 'outAimingAlgDebugOutfSpare6', 
+          'outMissileCmdElAngleCmd', 'outMissileCmdTrAngleCmd', 'outWsCmdstElevationPosCmd', 'outWsCmdstElevationTrackerRate', 'outWsCmdstTraversePosCmd', 'outWsCmdstTraverseTrackerRate', 
+          'outBITAimError_EL', 'outBITAimError_TR', 'outBITNoMovement_EL', 'outBITNoMovement_TR'],
+        startIdx: 2
       }
 
-      for (var i = 0; i < 50; i++) {
+      /*for (var i = 0; i < 50; i++) {
         var tLine = parseLine(resultlines[i]);
         if (tLine.length > 2 && isNaN(tLine[1])) {
           headerObj.header = verifyGoodName(tLine);
@@ -464,7 +574,7 @@ function readFile(file) {
 
       if (tLine.length != headerObj.header.length) { // No header
         headerObj = header4noHeader(tLine.length);
-      }
+      }*/
 
 
       return headerObj;
@@ -481,169 +591,36 @@ function readFile(file) {
       }
     }
 
+    function defineObj(header) {
+
+      var obj = {};
+      for (var i = 0; i < header.length; i++) {
+        obj[header[i]] = [];
+      };
+      return obj;
+    };
+
+    function verifyGoodName(name) {
+      name = name.map(element => element.replace(' ', ''));
+      return name;
+    }
+
     //plotFromCSV(event.target.result);
   });
   reader.readAsDataURL(file);
 }
 
+function processData() {
+  rows["padestalAimCmdTr"] = rows["outAimingAlgDebugOutfSpare5"];
+  rows["padestalAimCmdEl"] = plus( rows["outAimingAlgDebugOutfSpare6"], 15*d2r );
 
-function readBinFile(file) {
-  const reader = new FileReader();
-  reader.readAsArrayBuffer(file);
-  reader.onload = function (e) {
-    //console.log(e.target.result); /// <-- this contains an ArrayBuffer
-    v = e.target.result;
-    var h = new Int16Array(e.target.result);
-    let lineLength = h[1];
-    console.log(lineLength);
-    const header = getHeader(13);
+  rows["padestalAimErrTr"] = minusArrays(rows["outAimingAlgDebugOutfSpare5"], rows["inWS_SensorsstResolversfPsi"]);
+  rows["padestalAimErrEl"] = plus( minusArrays(rows["outAimingAlgDebugOutfSpare6"], rows["inWS_SensorsstResolversfTheta"]), 15*d2r);
 
-    rows = defineObj(header);
-
-    for (let i = 0; i < v.byteLength; i += lineLength) {
-      tLine = parseLine(v.slice(i, i + lineLength));
-      if (tLine.length == header.length) {
-        for (var j = 0; j < header.length; j++) {
-          rows[header[j]].push(tLine[j]);
-        }
-      }
-    }
-
-    try {
-      document.getElementById("explenation_text").innerHTML = "Record loaded succesfully!<br>Select relevant test";
-    } catch (error) { };
-  }
-
-  function parseLine(line) {
-
-    idx = [32, 40, 124, 128, 164, 168, 172, 176, 180, 184, 188, 192, 196, 216, 220, 312, 316, 320, 324, 328, 332, 336, 340, 344, 348, 352, 356];
-
-
-    let tLine = [];
-    tLine.push(new DataView(line.slice(4, 4 + 8)).getUint32(0, true) * 0.001); // Time
-
-    idx.forEach(ix => {
-      tLine.push(new DataView(line.slice(ix, ix + 4)).getFloat32(0, true));
-      /*n = new DataView(line.slice(ix, ix+4));
-      var num = n.getFloat32(0, true);
-      tLine.push(num);*/
-    });
-
-    //n = new DataView(line.slice(156 + 8, 160 + 8))
-    //var num = n.getFloat32(0, true);
-
-    //d = new Uint8Array(e.target.result);
-    return tLine;
-  }
-
-  function getHeader(OPcode) {
-
-    if (OPcode == 13) {
-      header = ['Time', 'Motion_Activity', 'BRS', 'Tr_Vel_Command', 'El_Vel_Command', 'Tr_Angle', 'El_Angle', 'Tr_Tacho', 'El_Tacho', 'Tr_Gyro', 'El_Gyro', 'Base_Gyro_Roll', 'Base_Gyro_Pitch', 'Base_Gyro_Yaw', 'Tilt_Angle_Roll', 'Tilt_Angle_Pitch', 'Bit1_Tr', 'Bit1_El', 'Bit2_Tr', 'Bit2_El', 'Bit3_Tr', 'Bit3_El', 'Bit4_Tr', 'Bit4_El', 'Bit5_Tr', 'Bit5_El', 'Bit6_Tr', 'Bit6_El'];
-    }
-
-    return header;
-  }
-
-
+  rows["CpCmd_Tr"] = mult( derivative( rows["inWS_SensorsstResolversfPsi"] ), 0.5 );
+  rows["CpCmd_El"] = plus( mult( derivative( rows["inWS_SensorsstResolversfTheta"] ), 0.5 ), -15*d2r );
 }
 
-function defineObj(header) {
-
-  var obj = {};
-  for (var i = 0; i < header.length; i++) {
-    obj[header[i]] = [];
-  };
-  return obj;
-};
-
-
-function header4noHeader(n) {
-  headerObj = {
-    header: ["TIME"],
-    startIdx: 0
-  }
-  for (var i = 1; i < n; i++) {
-    headerObj.header.push("S" + i);
-  }
-  return headerObj;
-}
-
-
-function addCheckbox(colName) {
-  var cont = document.createElement('container');
-  cont.className = "container1";
-  cont.id = colName;
-  var checkbox = document.createElement('input');
-  checkbox.type = "checkbox";
-  checkbox.id = colName;
-  checkbox.name = "signalCheckbox";
-  checkbox.onclick = sel;
-
-  var checkbox2 = document.createElement('input');
-  checkbox2.type = "checkbox";
-  checkbox2.id = colName;
-  checkbox2.name = "signalCheckbox2";
-  checkbox2.onclick = sel;
-
-  //var span = document.createElement('span');
-  //span.className="checkmark";
-  var br = document.createElement('br');
-  //var lbl = document.createTextNode(colName);
-  br.onclick = "console.log(\"click\")";
-
-  //var element = document.getElementById("sidenav");
-  var element = document.getElementById("checkboxesPlace");
-  element.appendChild(cont);
-  cont.appendChild(checkbox);
-  cont.appendChild(checkbox2);
-  //cont.appendChild(span);
-  cont.appendChild(document.createTextNode(colName));
-  //cont.appendChild(lbl);
-  cont.appendChild(br);
-
-}
-
-function verifyGoodName(name) {
-  name = name.map(element => element.replace(' ', ''));
-  return name;
-}
-
-function sel() {
-  var checkedBoxes = getCheckedBoxes("signalCheckbox");
-  var checkedBoxes2 = getCheckedBoxes("signalCheckbox2");
-
-  traces = [];
-  let i = 0;
-  while (i < checkedBoxes.length) {
-    traces.push(addLine(checkedBoxes[i].id, 1));
-    i += 1;
-  }
-
-  i = 0;
-  while (i < checkedBoxes2.length) {
-    traces.push(addLine(checkedBoxes2[i].id, 2));
-    i += 1;
-  }
-
-  var layout = {
-    height: window.innerHeight,
-    grid: {
-      rows: 2,
-      columns: 1,
-      pattern: 'coupled',
-    }
-  };
-
-  //https://plot.ly/javascript/configuration-options/
-  let config = {
-    responsive: true,
-    // staticPlot: true,
-    // editable: true
-  };
-
-  Plotly.newPlot("plot", traces, layout, { editable: true });
-}
 
 function cleanUp() {
   try {
@@ -826,7 +803,7 @@ function cutToZoom() {
 }
 
 function relativeTime() {
-  rows["TIME"].map
+  rows["time"].map
 }
 
 function markDataTips() {
@@ -1050,13 +1027,30 @@ let mult = (array, factor) => array.map(x => x * factor);
 
 const multArrays = (arr1, arr2) => arr1.map((num, i) => num * arr2[i]);
 
-let plus = (array, plus) => array.map(x => x + plus);
+let plus = (array, plus) => array.map(x => parseFloat(x) + plus);
+
+const minusArrays = (a, b) => a.map((val, index) => val - b[index]);
 
 let removeFirst = (array) => array.map((item, idx, all) => parseFloat(item) - parseFloat(all[0]));
 
 let removeMean = (array) => array.map((item, idx, all) => parseFloat(item) - mean(all));
 
 let mean = (array) => array.reduce((a, b) => parseFloat(a) + parseFloat(b)) / array.length;
+
+const derivative = arr => arr.slice(1).map((val, index) => 333*(val - arr[index]));
+
+const minPositive = arr => {
+  const positives = arr.filter(num => num > 0);
+  return positives.length > 0 ? Math.min(...positives) : Math.max(...arr);
+};
+
+const maxNegative = arr => {
+  const negatives = arr.filter(num => num < 0);
+  return negatives.length > 0 ? Math.max(...negatives) : Math.min(...arr);
+};
+
+//const minPositive = arr => Math.min(...arr.filter(num => num > 0));   // the minimum of only the positive numbers (closest to zero)
+//const maxNegative = arr => Math.max(...arr.filter(num => num < 0));   // the maximum of only the negtive numbers (closest to zero)
 
 let strClean = (str) => str.replace(/[^a-zA-Z0-9 ]/g, "");
 
@@ -1066,4 +1060,4 @@ let d2r = 3.1416 / 180;
 //var minIdx = (array, val) => array.findIndex(n => n > val);
 //var maxIdx = (array, val) => array.findIndex(n => n > val);
 
-    ////////////////////////// End of Math Operations ///////////////////////////
+////////////////////////// End of Math Operations ///////////////////////////
