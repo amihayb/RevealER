@@ -152,7 +152,7 @@ body {
     margin-left: 250px; /* Adjust this value based on the width of your sidenav */
   }
 
-  .plot {
+  .plot-area {
     margin-left: 260px; /* Same as the width of the sidenav */
     margin-top: 100px; /* Same as the width of the sidenav */
     font-size: 28px; /* Increased text to enable scrolling */
@@ -177,6 +177,31 @@ body {
     -ms-user-select: none;
     user-select: none;
   }
+
+  /* The Plotly table */
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      table-layout: fixed;
+      /* Ensures all columns have the same width */
+    }
+  
+    td {
+      /*border: 1px solid black;*/
+      border: none; /* Remove borders */
+      padding: 0px;
+      width: 50%;
+      /* Ensures each column takes up equal space */
+      height: 300px;
+      /* Adjust height as needed */
+    }
+  
+    .plot-container {
+      width: 100%;
+      height: 100%;
+    }
+
+
     
   /* Create a custom checkbox */
   .checkmark {

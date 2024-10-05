@@ -1,501 +1,6 @@
 // Reveal
 
-
-function MotorsSensors() {
-  cleanUp();
-  traces = [];
-  traces.push(addLine("Tr_Tacho", 1));
-  traces.push(addLine("Tr_Gyro", 1));
-  //traces.push(addLine("Tr_uCmd", 2));
-
-  var layout = {
-    height: window.innerHeight,
-    grid: {
-      rows: 2,
-      columns: 1,
-      pattern: 'coupled',
-    }
-  };
-
-  //https://plot.ly/javascript/configuration-options/
-  let config = {
-    responsive: true,
-    // staticPlot: true,
-    // editable: true
-  };
-
-  Plotly.newPlot("plot", traces, layout, { editable: true });
-}
-
-function replacePic(newPicTag) {
-  //document.getElementById('picture_main').src = './images/show_sensors.png';
-  pictureElement = document.getElementById('picture_main');
-  const sources = pictureElement.getElementsByTagName('source');
-  const img = document.getElementById('img_main');
-  sources[0].srcset = newPicTag;
-  sources[1].srcset = newPicTag;
-  sources[2].srcset = newPicTag;
-  img.onload = function () {
-    img.width = img.naturalWidth * 1.5;
-    img.height = img.naturalHeight * 1.5;
-    console.log(`Image width set to: ${img.width}px`);
-  };
-  console.log("switched");
-}
-
-
-function replaceText(textTag) {
-
-  var text2write;
-  switch (textTag) {
-    case "ShowSensors":
-      text2write = "<strong>Show Sensors</strong><br>Show Padestal, EOD & Missile sensors.";
-      break;
-
-    case "jump2EOD":
-      text2write = "<strong>Padestal Jump to EOD</strong><br>Start slave to EOD.<br>Test if the padestal aims on EOD target.";
-      break;
-
-    case "eod_cross":
-      text2write = "<strong>Slave to EOD</strong><br>Test padestal movement at Slave to EOD";
-      break;
-
-    case "slv2eod_tr":
-      text2write = "<strong>Slave to EOD: Traverse Movement Range</strong><br>Test padestal full movement range on traverse including:<ul><li>Movement somoothness</li><li>Sector limits behaviour</li><li>Passing 0 and 180 deg angles</li></ul>";
-      break;
-
-    case "slv2eod_el":
-      text2write = "<strong>Slave to EOD: Elevation Movement Range</strong><br>Test padestal full movement range on elevation including:<ul><li>Movement somoothness</li><li>Sector limits behaviour</li></ul>";
-      break;
-
-    case "msl_cross":
-      text2write = "<strong>Slave to Missile</strong><br>Test padestal movement at Slave to Missile";
-      break;
-
-    case "msl_squint":
-      text2write = "<strong>Missile Squint at Sector Limits</strong><br>Test missile and padestal behaviour ay sector limits.<br>The padestal should wait at sector limits as the missile eye squints into the movement prohibited zone.";
-      break;
-  }
-
-  document.getElementById("explenation_label").innerHTML = text2write;
-}
-
-
-// Set pressed button color to active
-let previousLink = null;
-
-document.querySelectorAll('.button').forEach(link => {
-  link.addEventListener('click', function (event) {
-    event.preventDefault(); // Prevent the default link behavior
-
-    // Reset the previous link's color
-    if (previousLink) {
-      previousLink.classList.remove('active');
-    }
-
-    // Set the current link's color
-    this.classList.add('active');
-
-    // Update the previous link
-    previousLink = this;
-  });
-});
-// End of Set pressed button color to active
-
-function jump2EOD() {
-  cleanUp();
-
-  /*rows["padestalAimCmdTr"] = rows["outAimingAlgDebugOutfSpare5"];
-  rows["padestalAimCmdEl"] = plus( rows["outAimingAlgDebugOutfSpare6"], 15*d2r );
-
-  rows["padestalAimErrTr"] = minusArrays(rows["outAimingAlgDebugOutfSpare5"], rows["inWS_SensorsstResolversfPsi"]);
-  rows["padestalAimErrEl"] = plus( minusArrays(rows["outAimingAlgDebugOutfSpare6"], rows["inWS_SensorsstResolversfTheta"]), 15*d2r);*/
-
-  traces = [];
-  // Position EOD & Padestal
-  // traces.push(addLine("inEodSensstEodAngles_RangestAnglesfPsi", 1, 1, r2d));
-  traces.push(addLine("padestalAimCmdTr", 1, 1, r2d));
-  traces.push(addLine("inWS_SensorsstResolversfPsi", 1, 1, r2d));
-  // traces.push(addLine("inEodSensstEodAngles_RangestAnglesfTheta", 1, 2, r2d));
-  traces.push(addLine("padestalAimCmdEl", 1, 2, r2d));
-  traces.push(addLine("inWS_SensorsstResolversfTheta", 1, 2, r2d));
-
-  // Rate command to padestal
-  traces.push(addLine("outWsCmdstTraversePosCmd", 2, 1, r2d));
-  traces.push(addLine("outWsCmdstElevationPosCmd", 2, 2, r2d));
-
-  // Aim Error
-  traces.push(addLine("padestalAimErrTr", 3, 1, r2d));
-  traces.push(addLine("padestalAimErrEl", 3, 2, r2d));
-
-  plotTraces(traces, 3, 2);
-}
-
-
-function eod_cross() {
-  cleanUp();
-  
-  traces = [];
-  // Position EOD & Padestal
-  traces.push(addLine("inEodSensstEodAngles_RangestAnglesfPsi", 1, 1, r2d));
-  traces.push(addLine("padestalAimCmdTr", 1, 1, r2d));
-  traces.push(addLine("inWS_SensorsstResolversfPsi", 1, 1, r2d));
-  traces.push(addLine("inEodSensstEodAngles_RangestAnglesfTheta", 1, 2, r2d));
-  traces.push(addLine("padestalAimCmdEl", 1, 2, r2d));
-  traces.push(addLine("inWS_SensorsstResolversfTheta", 1, 2, r2d));
-
-  // Rate command to padestal
-  traces.push(addLine("outWsCmdstTraversePosCmd", 2, 1, r2d));
-  traces.push(addLine("outWsCmdstElevationPosCmd", 2, 2, r2d));
-
-  // Missile Eye
-  traces.push(addLine("inLEUfMissile_RelAngle_Tr_M", 3, 1, r2d));
-  traces.push(addLine("inLEUfMissile_RelAngle_El_M", 3, 2, r2d));
-
-  plotTraces(traces, 3, 2);
-}
-
-
-
-function slv2eod_moveRange(){
-  cleanUp();
-  
-  limTr = [maxNegative(rows["inWS_SensorsstResolversfPsi"]), minPositive(rows["inWS_SensorsstResolversfPsi"])];
-  limEl = [Math.min(...rows["inWS_SensorsstResolversfTheta"]), Math.max(...rows["inWS_SensorsstResolversfTheta"])]
-  console.log(limTr);
-  console.log(limEl);
-
-  traces = [];
-  // Position EOD & Padestal
-  traces.push(addLine("padestalAimCmdTr", 1, 1, r2d));
-  traces.push(addLine("inWS_SensorsstResolversfPsi", 1, 1, r2d));
-  traces.push(addLine("padestalAimCmdEl", 1, 2, r2d));
-  traces.push(addLine("inWS_SensorsstResolversfTheta", 1, 2, r2d));
-  
-  traces.push(addLimitLine(1, 1, r2d*limTr[0]));
-  traces.push(addLimitLine(1, 1, r2d*limTr[1]));
-  traces.push(addLimitLine(1, 2, r2d*limEl[0]));
-  traces.push(addLimitLine(1, 2, r2d*limEl[1]));
-
-  plotTraces(traces, 1,2);
-}
-
-
-function slv2msl_cross() {
-  cleanUp();
-  
-  traces = [];
-  // Missile Eye
-  traces.push(addLine("inLEUfMissile_RelAngle_Tr_M", 1, 1, r2d));
-  traces.push(addLine("inLEUfMissile_RelAngle_El_M", 1, 2, r2d));
-  traces.push(addLine("CpCmd_Tr", 1, 1, r2d));
-  traces.push(addLine("CpCmd_El", 1, 2, r2d));
-
-  // Position EOD & Padestal
-  traces.push(addLine("inWS_SensorsstResolversfPsi", 2, 1, r2d));
-  traces.push(addLine("inWS_SensorsstResolversfTheta", 2, 2, r2d));
-
-  plotTraces(traces, 2, 2);
-}
-
-function slv2msl_squint() {
-  cleanUp();
-
-  limTr = [maxNegative(rows["inWS_SensorsstResolversfPsi"]), minPositive(rows["inWS_SensorsstResolversfPsi"])];
-  limEl = [Math.min(...rows["inWS_SensorsstResolversfTheta"]), Math.max(...rows["inWS_SensorsstResolversfTheta"])]
-  console.log(limTr);
-  console.log(limEl);
-  
-  traces = [];
-  // Missile Eye
-  traces.push(addLine("inLEUfMissile_RelAngle_Tr_M", 1, 1, r2d));
-  traces.push(addLine("inLEUfMissile_RelAngle_El_M", 1, 2, r2d));
-  traces.push(addLine("CpCmd_Tr", 1, 1, r2d));
-  traces.push(addLine("CpCmd_El", 1, 2, r2d));
-
-  // Position EOD & Padestal
-  traces.push(addLine("inWS_SensorsstResolversfPsi", 2, 1, r2d));
-  traces.push(addLine("inWS_SensorsstResolversfTheta", 2, 2, r2d));
-
-  traces.push(addLimitLine(2, 1, r2d*limTr[0]));
-  traces.push(addLimitLine(2, 1, r2d*limTr[1]));
-  traces.push(addLimitLine(2, 2, r2d*limEl[0]));
-  traces.push(addLimitLine(2, 2, r2d*limEl[1]));
-
-  plotTraces(traces, 2, 2);
-}
-
-
-function checkBits() {
-  cleanUp();
-
-  traces = [];
-  // Missile Eye
-  traces.push(addLine("outWsCmdstTraversePosCmd", 1, 1, r2d));
-  traces.push(addLine("outWsCmdstElevationPosCmd", 1, 2, r2d));
-  traces.push(addLine("outBITAimError_TR", 2, 1));
-  traces.push(addLine("outBITAimError_EL", 2, 2));
-  traces.push(addLine("outBITNoMovement_TR", 3, 1));
-  traces.push(addLine("outBITNoMovement_EL", 3, 2));
-  traces.push(addLine("outPosCmdValid", 4, 1));
-  traces.push(addLine("outPosCmdValid", 4, 2));
-
-  plotTraces(traces, 4, 2);
-}
-
-// Old polts functions
-function GyroCheck() {
-  cleanUp();
-  traces = [];
-  traces.push(addLine("Tr_Gyro", 1));
-  traces.push(addLine("Base_Gyro_Yaw", 1));
-  traces.push(addLine("El_Gyro", 2));
-  traces.push(addLine("Base_Gyro_Pitch", 2));
-
-  plotTraces(traces);
-}
-
-function Designation() {
-  cleanUp();
-  traces = [];
-  traces.push(addLine("Tr_Tacho", 1));
-  traces.push(addLine("Tr_Resolver", 2));
-
-  plotTraces(traces);
-}
-
-
-function Stabilization() {
-  cleanUp();
-
-  window.rows["Tr_Gyro_int"] = integrate(window.rows["Tr_Gyro"]);
-  window.rows["El_Gyro_int"] = integrate(window.rows["El_Gyro"]);
-
-  traces = [];
-  traces.push(addLine("Tr_Gyro", 1, 1));
-  traces.push(addLine("El_Gyro", 1, 2));
-  traces.push(addLine("Tr_Gyro_int", 2, 1));
-  traces.push(addLine("El_Gyro_int", 2, 2));
-
-  plotTraces(traces, 2, 2);
-}
-
-function Backlash() {
-  cleanUp();
-
-  let lim = 5;
-  traces = [];
-  traces.push(addLine("Tr_Angle", 1, 1, 1000));
-  traces.push(addLine("El_Angle", 2, 1, 1000));
-  traces.push(addLimitLine(1, 1, lim));
-  traces.push(addLimitLine(1, 1, -lim));
-  traces.push(addLimitLine(2, 1, lim));
-  traces.push(addLimitLine(2, 1, -lim));
-
-  plotTraces(traces);
-}
-
-function Smoothness() {
-
-  cleanUp();
-
-  traces = [];
-  traces.push(addLine("Tr_Tacho", 1, 1, r2d));
-  traces.push(addLine("El_Tacho", 2, 1, r2d));
-  traces.push(addLine("Tr_Vel_Command", 1, 1, r2d));
-  traces.push(addLine("El_Vel_Command", 2, 1, r2d));
-
-  /*rows["tempRow"] = plus(rows["El_Vel_Command"],0.001);
-  traces.push(addLine("tempRow", 2, 1, r2d, 'Lim', false));
-  rows["tempRow"] = plus(rows["El_Vel_Command"],-0.001);
-  traces.push(addLine("tempRow", 2, 1, r2d, 'Lim', false));*/
-
-  plotTraces(traces, 2, 2);
-
-}
-
-function IMUshake() {
-  cleanUp();
-
-  traces = [];
-  traces.push(addLine("Base_Gyro_Roll", 1));
-  traces.push(addLine("Base_Gyro_Pitch", 2));
-  traces.push(addLine("Base_Gyro_Yaw", 3));
-
-  plotTraces(traces, 3);
-}
-
-
-function ShowSensors() {
-  cleanUp();
-
-  traces = [];
-  traces.push(addLine("Tr_Tacho", 1, 1, r2d));
-  traces.push(addLine("Tr_Gyro", 1, 1, r2d));
-  traces.push(addLine("El_Tacho", 1, 2, r2d));
-  traces.push(addLine("El_Gyro", 1, 2, r2d));
-  traces.push(addLine("Tr_Angle", 2, 1, r2d));
-  traces.push(addLine("El_Angle", 2, 2, r2d));
-
-  plotTraces(traces, 2, 2);
-}
-
-function Bits() {
-  cleanUp();
-  traces = [];
-  for (var i = 1; i < 7; i++) {
-    traces.push(addLine("Bit" + i + "_Tr", i, 1));
-    traces.push(addLine("Bit" + i + "_El", i, 2));
-  }
-
-  plotTraces(traces, 6, 2);
-}
-
-
-function addLine(vName, ax_y = 1, ax_x = 1, factor = 1, showName, showLeg = true, allRows) {
-
-  if (showName === undefined) {
-    showName = vName.replace(/_/g, " ");
-  }
-
-  let x = [];
-  let y = [];
-
-  var x_axis = "time";
-  x = rows[x_axis];
-  y = mult(rows[vName], factor);
-  var trace = {
-    x: x,
-    y: y,
-    xaxis: 'x' + ax_x,
-    yaxis: 'y' + ax_y,
-    name: showName,
-    type: 'scatter',
-    showlegend: showLeg,
-  };
-  if (!showLeg) {
-    trace.line = {
-      color: 'Red',
-      width: 2,
-    };
-  }
-  return trace;
-}
-//plotFromCSV();
-
-
-function addLimitLine(ax_y = 1, ax_x = 1, val) {
-
-  var lim1 = {
-    x: [window.rows["time"][0], window.rows["time"].slice(-1)[0]],
-    y: [val, val],
-    xaxis: 'x' + ax_x,
-    yaxis: 'y' + ax_y,
-    name: 'Limit',
-    mode: 'line',
-    line: {
-      color: 'Red',
-      width: 2,
-    },
-    showlegend: false,
-  }
-  return lim1;
-}
-
-function addLineBin(vName, ax, allRows) {
-  let x = [];
-  let y = [];
-
-  var x_axis = "time";
-  x = rows[x_axis];
-  y = rows[vName];
-  var trace = {
-    x: x,
-    y: y,
-    yaxis: 'y' + ax,
-    name: vName,
-    type: 'scatter',
-  };
-  return trace;
-}
-
-function plotTraces(traces, sp_r = 2, sp_c = 1) {
-  var layout = {
-    height: window.innerHeight,
-    title: {
-      text: this.fileName,
-      font: {
-        size: 24
-      },
-    },
-    grid: {
-      rows: sp_r,
-      columns: sp_c,
-      pattern: 'coupled',
-    },
-    yaxis: {title: 'Y Axis 1'},
-    yaxis2: {title: 'Y Axis 2'},
-    annotation: [
-      {
-        xref: 'paper',
-        yref: 'paper',
-        x: 0,
-        xanchor: 'right',
-        y: 1,
-        yanchor: 'bottom',
-        text: 'test',
-        showarrow: false
-      }
-    ],
-    showlegend: false
-  };
-
-  //https://plot.ly/javascript/configuration-options/
-  let config = {
-    responsive: true,
-    // staticPlot: true,
-    // editable: true
-  };
-
-  Plotly.newPlot("plot", traces, layout, { editable: true });
-}
-
-// Pass the checkbox name to the function
-function getCheckedBoxes(chkboxName) {
-  var checkboxes = document.getElementsByName(chkboxName);
-  var checkboxesChecked = [];
-  // loop over them all`
-  for (var i = 0; i < checkboxes.length; i++) {
-    // And stick the checked ones onto an array...
-    if (checkboxes[i].checked) {
-      checkboxesChecked.push(checkboxes[i]);
-    }
-  }
-  // Return the array if it is non-empty, or null
-  //return checkboxesChecked.length > 0 ? checkboxesChecked : null;
-  return checkboxesChecked;
-}
-
-
-function addDropdown(values) {
-  var select = document.createElement("select");
-  select.name = "x_axis";
-  select.id = "x_axis"
-
-  for (const val of values) {
-    var option = document.createElement("option");
-    option.value = val;
-    option.text = val.charAt(0).toUpperCase() + val.slice(1);
-    select.appendChild(option);
-  }
-
-  var label = document.createElement("label");
-  label.innerHTML = "X Axis: "
-  label.htmlFor = "x_axis";
-
-  document.getElementById("xaxis_dropdown").appendChild(label).appendChild(select);
-}
-
+/////////// Read and process files ///////////
 const fileSelector = document.getElementById('file-selector');
 fileSelector.addEventListener('change', (event) => {
   const fileList = event
@@ -609,6 +114,577 @@ function readFile(file) {
   });
   reader.readAsDataURL(file);
 }
+/////////// End of Read and process files ///////////
+
+
+/////////// Ploting Functions ///////////
+
+function createPlotlyTable(m, n, containerId) {
+  const container = document.getElementById(containerId);
+
+  // Remove any existing table in the container
+  while (container.firstChild) {
+    container.removeChild(container.firstChild);
+  }
+
+  const table = document.createElement('table');
+  const plotHandles = [];
+
+  for (let i = 0; i < m; i++) {
+    const row = document.createElement('tr');
+    const rowHandles = [];
+
+    for (let j = 0; j < n; j++) {
+      const cell = document.createElement('td');
+      const plotDiv = document.createElement('div');
+      plotDiv.id = `plot-${i}-${j}`;
+      plotDiv.className = 'plot-container';
+      cell.appendChild(plotDiv);
+      row.appendChild(cell);
+
+      rowHandles.push(plotDiv);
+    }
+
+    table.appendChild(row);
+    plotHandles.push(rowHandles);
+  }
+
+  // Append the new table to the designated container
+  container.appendChild(table);
+
+  return plotHandles;
+}
+
+function plotlyTableToDiscrete(plotHandles) {
+  plotHandles.forEach((row) => {
+      row.forEach((plotDiv) => {
+          const update = {
+              'yaxis.type': 'category'
+          };
+          Plotly.relayout(plotDiv.id, update);
+      });
+  });
+}
+
+
+function plot(plotHandles, rowIndex, colIndex, xData, yData, traceName = null, title, xLabel, yLabel, color = null, showLeg = true, mode = 'lines') {
+  if (rowIndex >= plotHandles.length || colIndex >= plotHandles[rowIndex].length) {
+    console.error('Invalid cell index');
+    return;
+  }
+
+  const plotDiv = plotHandles[rowIndex][colIndex];
+  const trace = {
+    x: xData,
+    y: yData,
+    mode: mode,
+    marker: color ? { color: color } : {}, 
+    showlegend: showLeg
+  };
+  if (traceName !== null) {
+    trace.name = traceName;
+  }
+  const layout = {
+    title: title,
+    xaxis: {
+      title: xLabel
+    },
+    yaxis: {
+      title: yLabel,
+    }, 
+    legend: {
+      x: 1,
+      y: 1,
+      xanchor: 'right'
+    }
+  };
+
+  const config = {
+    editable: true
+};
+
+  // Check if the plot already exists
+  if (plotDiv.data) {
+    // Add new trace to the existing plot
+    Plotly.addTraces(plotDiv.id, trace);
+  } else {
+    // Create a new plot if it doesn't exist
+    Plotly.newPlot(plotDiv.id, [trace], layout, config);
+  }
+}
+
+
+function addLimitLine(plotHandles, rowIndex, colIndex, val) {
+  if (rowIndex >= plotHandles.length || colIndex >= plotHandles[rowIndex].length) {
+    console.error('Invalid cell index');
+    return;
+  }
+
+  const plotDiv = plotHandles[rowIndex][colIndex];
+
+  var lim1 = {
+    x: [window.rows["time"][0], window.rows["time"].slice(-1)[0]],
+    y: [val, val],
+    name: 'Limit',
+    mode: 'lines',
+    line: {
+      color: 'Red',
+      width: 2,
+    },
+    showlegend: false,
+  }
+  Plotly.addTraces(plotDiv.id, lim1);
+  //return lim1;
+}
+
+/////////// End of Ploting Functions ///////////
+
+
+
+
+function replacePic(newPicTag) {
+  //document.getElementById('picture_main').src = './images/show_sensors.png';
+  pictureElement = document.getElementById('picture_main');
+  const sources = pictureElement.getElementsByTagName('source');
+  const img = document.getElementById('img_main');
+  sources[0].srcset = newPicTag;
+  sources[1].srcset = newPicTag;
+  sources[2].srcset = newPicTag;
+  img.onload = function () {
+    img.width = img.naturalWidth * 1.5;
+    img.height = img.naturalHeight * 1.5;
+    console.log(`Image width set to: ${img.width}px`);
+  };
+  console.log("switched");
+}
+
+
+function replaceText(textTag) {
+
+  var text2write;
+  switch (textTag) {
+    case "ShowSensors":
+      text2write = "<strong>Show Sensors</strong><br>Show Padestal, EOD & Missile sensors.";
+      break;
+
+    case "jump2EOD":
+      text2write = "<strong>Padestal Jump to EOD</strong><br>Start slave to EOD.<br>Test if the padestal aims on EOD target.";
+      break;
+
+    case "eod_cross":
+      text2write = "<strong>Slave to EOD</strong><br>Test padestal movement at Slave to EOD";
+      break;
+
+    case "slv2eod_tr":
+      text2write = "<strong>Slave to EOD: Traverse Movement Range</strong><br>Test padestal full movement range on traverse including:<ul><li>Movement somoothness</li><li>Sector limits behaviour</li><li>Passing 0 and 180 deg angles</li></ul>";
+      break;
+
+    case "slv2eod_el":
+      text2write = "<strong>Slave to EOD: Elevation Movement Range</strong><br>Test padestal full movement range on elevation including:<ul><li>Movement somoothness</li><li>Sector limits behaviour</li></ul>";
+      break;
+
+    case "msl_cross":
+      text2write = "<strong>Slave to Missile</strong><br>Test padestal movement at Slave to Missile";
+      break;
+
+    case "msl_squint":
+      text2write = "<strong>Missile Squint at Sector Limits</strong><br>Test missile and padestal behaviour ay sector limits.<br>The padestal should wait at sector limits as the missile eye squints into the movement prohibited zone.";
+      break;
+  }
+
+  document.getElementById("explenation_label").innerHTML = text2write;
+}
+
+
+// Set pressed button color to active
+let previousLink = null;
+
+document.querySelectorAll('.button').forEach(link => {
+  link.addEventListener('click', function (event) {
+    event.preventDefault(); // Prevent the default link behavior
+
+    // Reset the previous link's color
+    if (previousLink) {
+      previousLink.classList.remove('active');
+    }
+
+    // Set the current link's color
+    this.classList.add('active');
+
+    // Update the previous link
+    previousLink = this;
+  });
+});
+// End of Set pressed button color to active
+
+function ShowSensors() {
+  // Show:
+  // Angles: EOD, PosCmd, WS
+  // Rate: WS
+  // Missile Eye
+
+  cleanUp();
+  const pl = createPlotlyTable(3,2, 'plot-area');
+
+  plot(pl, 0, 0, rows.time, rows.inEodSensstEodAngles_RangestAnglesfPsi, traceName = 'EOD Angle', title="Traverse<br>Angles", "", "Angle [rad]");
+  plot(pl, 0, 0, rows.time, rows.padestalAimCmdTr, traceName = 'Padestal Cmd', title="Traverse<br>Angles", "", "Angle [rad]");
+  plot(pl, 0, 0, rows.time, rows.inWS_SensorsstResolversfPsi, traceName = 'Padestal Angle', title="Traverse<br>Angles", "", "Angle [rad]");
+
+  plot(pl, 0, 1, rows.time, rows.inEodSensstEodAngles_RangestAnglesfTheta, traceName = 'EOD Angle', title="Elevation<br>Angles", "", "Angle [rad]");
+  plot(pl, 0, 1, rows.time, rows.padestalAimCmdEl, traceName = 'Padestal Cmd', title="Elevation<br>Angles", "", "Angle [rad]");
+  plot(pl, 0, 1, rows.time, rows.inWS_SensorsstResolversfTheta, traceName = 'Padestal Angle', title="Elevation<br>Angles", "", "Angle [rad]");
+
+  plot(pl, 1, 0, rows.time, rows.inWS_SensorsstGyrofPsi, traceName = 'Gyro Tr', title="Padestal Gyro", "", "Rate [rad/s]");
+  plot(pl, 1, 1, rows.time, rows.inWS_SensorsstGyrofTheta, traceName = 'Gyro El', title="Padestal Gyro", "", "Rate [rad/s]");
+
+  plot(pl, 2, 0, rows.time, rows.inLEUfMissile_RelAngle_Tr_M, traceName = 'Msl Tr Ang', title="Missile Eye", "Time [s]", "Angle [rad]");
+  plot(pl, 2, 1, rows.time, rows.inLEUfMissile_RelAngle_El_M, traceName = 'Msl El Ang', title="Missile Eye", "Time [s]", "Angle [rad]");
+}
+
+
+function jump2EOD() {
+
+  cleanUp();
+  const pl = createPlotlyTable(3,2, 'plot-area');
+  plot(pl, 0, 0, rows.time, rows.padestalAimCmdTr, traceName = 'Aim Command', title="Traverse<br>Padestal Aim Command", "", "Angle [rad]");
+  plot(pl, 0, 0, rows.time, rows.inWS_SensorsstResolversfPsi, traceName = 'Padestal Angle', title="Padestal Aim Command", "", "Angle [rad]");
+  plot(pl, 0, 1, rows.time, rows.padestalAimCmdEl, traceName = 'Aim Command', title="Elevation<br>Padestal Aim Command", "", "Angle [rad]");
+  plot(pl, 0, 1, rows.time, rows.inWS_SensorsstResolversfTheta, traceName = 'Padestal Angle', title="Padestal Aim Command", "", "Angle [rad]");
+
+  plot(pl, 1, 0, rows.time, rows.padestalAimErrTr, traceName = 'Aim Error', title="Padestal Aim Error", "", "Angle [rad]");
+  plot(pl, 1, 1, rows.time, rows.padestalAimErrEl, traceName = 'Aim Error', title="Padestal Aim Error", "", "Angle [rad]");
+  
+  plot(pl, 2, 0, rows.time, rows.inLEUfMissile_RelAngle_Tr_M, traceName = 'Msl Tr Ang', title="Missile Eye", "Time [s]", "Angle [rad]");
+  plot(pl, 2, 1, rows.time, rows.inLEUfMissile_RelAngle_El_M, traceName = 'Msl El Ang', title="Missile Eye", "Time [s]", "Angle [rad]");
+}
+
+
+function eod_cross() {
+  cleanUp();
+  const pl = createPlotlyTable(3,2, 'plot-area');
+
+  plot(pl, 0, 0, rows.time, rows.inEodSensstEodAngles_RangestAnglesfPsi, traceName = 'EOD Angle', title="Traverse<br>Angles", "", "Angle [rad]");
+  plot(pl, 0, 0, rows.time, rows.padestalAimCmdTr, traceName = 'Padestal Cmd', title="Traverse<br>Angles", "", "Angle [rad]");
+  plot(pl, 0, 0, rows.time, rows.inWS_SensorsstResolversfPsi, traceName = 'Padestal Angle', title="Traverse<br>Angles", "", "Angle [rad]");
+
+  plot(pl, 0, 1, rows.time, rows.inEodSensstEodAngles_RangestAnglesfTheta, traceName = 'EOD Angle', title="Elevation<br>Angles", "", "Angle [rad]");
+  plot(pl, 0, 1, rows.time, rows.padestalAimCmdEl, traceName = 'Padestal Cmd', title="Elevation<br>Angles", "", "Angle [rad]");
+  plot(pl, 0, 1, rows.time, rows.inWS_SensorsstResolversfTheta, traceName = 'Padestal Angle', title="Elevation<br>Angles", "", "Angle [rad]");
+
+  plot(pl, 1, 0, rows.time, rows.outWsCmdstTraversePosCmd, traceName = 'WS Cmd', title="Padestal Command / Position Error", "", "Angle [rad]");
+  plot(pl, 1, 1, rows.time, rows.outWsCmdstElevationPosCmd, traceName = 'WS Cmd', title="Padestal Command / Position Error", "", "Angle [rad]");
+
+  plot(pl, 2, 0, rows.time, rows.inLEUfMissile_RelAngle_Tr_M, traceName = 'Msl Tr Ang', title="Missile Eye", "Time [s]", "Angle [rad]");
+  plot(pl, 2, 1, rows.time, rows.inLEUfMissile_RelAngle_El_M, traceName = 'Msl El Ang', title="Missile Eye", "Time [s]", "Angle [rad]");
+}
+
+
+
+function slv2eod_moveRange(){
+  cleanUp();
+  
+  limTr = [maxNegative(rows["inWS_SensorsstResolversfPsi"]), minPositive(rows["inWS_SensorsstResolversfPsi"])];
+  limEl = [Math.min(...rows["inWS_SensorsstResolversfTheta"]), Math.max(...rows["inWS_SensorsstResolversfTheta"])]
+  
+  console.log(limTr);
+  console.log(limEl);
+
+  const pl = createPlotlyTable(1,2, 'plot-area');
+
+  plot(pl, 0, 0, rows.time, rows.padestalAimCmdTr, traceName = 'EOD', title="Traverse", "Time [s]", "Angle [rad]");
+  plot(pl, 0, 0, rows.time, rows.inWS_SensorsstResolversfPsi, traceName = 'Padestal', title="Traverse", "Time [s]", "Angle [rad]");
+
+  plot(pl, 0, 1, rows.time, rows.padestalAimCmdEl, traceName = 'EOD', title="Elevation", "Time [s]", "Angle [rad]");
+  plot(pl, 0, 1, rows.time, rows.inWS_SensorsstResolversfTheta, traceName = 'Padestal', title="Elevation", "Time [s]", "Angle [rad]");
+  
+  addLimitLine(pl, 0, 0, limTr[0]);
+  addLimitLine(pl, 0, 0, limTr[1]);
+  addLimitLine(pl, 0, 1, limEl[0]);
+  addLimitLine(pl, 0, 1, limEl[1]);
+
+}
+
+
+function slv2msl_cross() {
+  cleanUp();
+
+  const pl = createPlotlyTable(2,2, 'plot-area');
+
+  plot(pl, 0, 0, rows.time, rows.inLEUfMissile_RelAngle_Tr_M, traceName = 'Missile Eye', title="Traverse<br>Missile Eye", "", "Angle [rad]");
+  plot(pl, 0, 0, rows.time, rows.CpCmd_Tr, traceName = 'WS Rate / Cp', title="Traverse<br>Missile Eye", "", "Angle [rad]");
+
+  plot(pl, 0, 1, rows.time, rows.inLEUfMissile_RelAngle_El_M, traceName = 'Missile Eye', title="Elevation<br>Missile Eye", "", "Angle [rad]");
+  plot(pl, 0, 1, rows.time, rows.CpCmd_El, traceName = 'WS Rate / Cp', title="Elevation<br>Missile Eye", "", "Angle [rad]");
+
+  plot(pl, 1, 0, rows.time, rows.inWS_SensorsstResolversfPsi, traceName = 'Padestal', title="Padestal", "Time [s]", "Angle [rad]");
+  plot(pl, 1, 1, rows.time, rows.inWS_SensorsstResolversfTheta, traceName = 'Padestal', title="Padestal", "Time [s]", "Angle [rad]");
+}
+
+
+function slv2msl_squint() {
+  cleanUp();
+
+  limTr = [maxNegative(rows["inWS_SensorsstResolversfPsi"]), minPositive(rows["inWS_SensorsstResolversfPsi"])];
+  limEl = [Math.min(...rows["inWS_SensorsstResolversfTheta"]), Math.max(...rows["inWS_SensorsstResolversfTheta"])]
+  console.log(limTr);
+  console.log(limEl);
+
+  const pl = createPlotlyTable(2,2, 'plot-area');
+
+  plot(pl, 0, 0, rows.time, rows.inLEUfMissile_RelAngle_Tr_M, traceName = 'Missile Eye', title="Traverse<br>Missile Eye", "", "Angle [rad]");
+  plot(pl, 0, 1, rows.time, rows.inLEUfMissile_RelAngle_El_M, traceName = 'Missile Eye', title="Elevation<br>Missile Eye", "", "Angle [rad]");
+
+  plot(pl, 1, 0, rows.time, rows.inWS_SensorsstResolversfPsi, traceName = 'Padestal', title="Padestal Limit:<br>" + limTr, "Time [s]", "Angle [rad]");
+  plot(pl, 1, 1, rows.time, rows.inWS_SensorsstResolversfTheta, traceName = 'Padestal', title="Padestal Limit:<br>" + limEl, "Time [s]", "Angle [rad]");
+
+  addLimitLine(pl, 1, 0, limTr[0]);
+  addLimitLine(pl, 1, 0, limTr[1]);
+  addLimitLine(pl, 1, 1, limEl[0]);
+  addLimitLine(pl, 1, 1, limEl[1]);
+}
+
+
+function handshake() {
+  cleanUp();
+
+  const pl = createPlotlyTable(3,2, 'plot-area');
+
+  plot(pl, 0, 0, rows.time, rows.padestalAimCmdTr, traceName = 'EOD', title="Traverse<br>EOD & Padestal Position", "", "Angle [rad]");
+  plot(pl, 0, 0, rows.time, rows.inWS_SensorsstResolversfPsi, traceName = 'Padestal', title="Traverse<br>EOD & Padestal Position", "", "Angle [rad]");
+
+  plot(pl, 0, 1, rows.time, rows.padestalAimCmdEl, traceName = 'EOD', title="Elevation<br>EOD & Padestal Position", "", "Angle [rad]");
+  plot(pl, 0, 1, rows.time, rows.inWS_SensorsstResolversfTheta, traceName = 'Padestal', title="Elevation<br>EOD & Padestal Position", "", "Angle [rad]");
+
+  plot(pl, 1, 0, rows.time, rows.inLEUfMissile_RelAngle_Tr_M, traceName = 'Missile Eye', title="Missile Eye", "", "Angle [rad]", color=null, showLeg = false);
+  plot(pl, 1, 1, rows.time, rows.inLEUfMissile_RelAngle_El_M, traceName = 'Missile Eye', title="Missile Eye", "", "Angle [rad]", color=null, showLeg = false);
+
+  plot(pl, 2, 0, rows.time, rows.outWsCmdstTraversePosCmd, traceName = 'WS Cmd', title="Padestal Command", "Time [s]", "Angle [rad]", color=null, showLeg = false);
+  plot(pl, 2, 1, rows.time, rows.outWsCmdstElevationPosCmd, traceName = 'WS Cmd', title="Padestal Command", "Time [s]", "Angle [rad]", color=null, showLeg = false);
+}
+
+
+function checkBits() {
+  cleanUp();
+
+  const pl = createPlotlyTable(4,2, 'plot-area');
+
+  plot(pl, 0, 0, rows.time, rows.outWsCmdstTraversePosCmd, traceName = 'Padestal', title="Traverse<br>Padestal Angle", "", "Angle [rad]", color=null, showLeg = false);
+  plot(pl, 0, 1, rows.time, rows.outWsCmdstElevationPosCmd, traceName = 'Padestal', title="Elevation<br>Padestal Angle", "", "Angle [rad]", color=null, showLeg = false);
+
+  plot(pl, 1, 0, rows.time, rows.outBITAimError_TR, traceName = 'BITAimError', title="Aim Error BIT", "", "", color=null, showLeg = false, mode='markers');
+  plot(pl, 1, 1, rows.time, rows.outBITAimError_EL, traceName = 'BITAimError', title="Aim Error BIT", "", "", color=null, showLeg = false, mode='markers');
+
+  plot(pl, 2, 0, rows.time, rows.outBITNoMovement_TR, traceName = 'BITNoMovement', title="No Movement BIT", "", "", color=null, showLeg = false, mode='markers');
+  plot(pl, 2, 1, rows.time, rows.outBITNoMovement_EL, traceName = 'BITNoMovement', title="No Movement BIT", "", "", color=null, showLeg = false, mode='markers');
+
+  plot(pl, 3, 0, rows.time, rows.outPosCmdValid, traceName = 'PosCmdValid', title="Pos Cmd Valid", "Time [s]", "", color=null, showLeg = false, mode='markers');
+  plot(pl, 3, 1, rows.time, rows.outPosCmdValid, traceName = 'PosCmdValid', title="Pos Cmd Valid", "Time [s]", "", color=null, showLeg = false, mode='markers');
+
+  plotlyTableToDiscrete(pl.slice(1,8));
+}
+
+// Old polts functions
+function GyroCheck() {
+  cleanUp();
+  traces = [];
+  traces.push(addLine("Tr_Gyro", 1));
+  traces.push(addLine("Base_Gyro_Yaw", 1));
+  traces.push(addLine("El_Gyro", 2));
+  traces.push(addLine("Base_Gyro_Pitch", 2));
+
+  plotTraces(traces);
+}
+
+function Designation() {
+  cleanUp();
+  traces = [];
+  traces.push(addLine("Tr_Tacho", 1));
+  traces.push(addLine("Tr_Resolver", 2));
+
+  plotTraces(traces);
+}
+
+
+function Stabilization() {
+  cleanUp();
+
+  window.rows["Tr_Gyro_int"] = integrate(window.rows["Tr_Gyro"]);
+  window.rows["El_Gyro_int"] = integrate(window.rows["El_Gyro"]);
+
+  traces = [];
+  traces.push(addLine("Tr_Gyro", 1, 1));
+  traces.push(addLine("El_Gyro", 1, 2));
+  traces.push(addLine("Tr_Gyro_int", 2, 1));
+  traces.push(addLine("El_Gyro_int", 2, 2));
+
+  plotTraces(traces, 2, 2);
+}
+
+function Backlash() {
+  cleanUp();
+
+  let lim = 5;
+  traces = [];
+  traces.push(addLine("Tr_Angle", 1, 1, 1000));
+  traces.push(addLine("El_Angle", 2, 1, 1000));
+  traces.push(addLimitLine(1, 1, lim));
+  traces.push(addLimitLine(1, 1, -lim));
+  traces.push(addLimitLine(2, 1, lim));
+  traces.push(addLimitLine(2, 1, -lim));
+
+  plotTraces(traces);
+}
+
+function Smoothness() {
+
+  cleanUp();
+
+  traces = [];
+  traces.push(addLine("Tr_Tacho", 1, 1, r2d));
+  traces.push(addLine("El_Tacho", 2, 1, r2d));
+  traces.push(addLine("Tr_Vel_Command", 1, 1, r2d));
+  traces.push(addLine("El_Vel_Command", 2, 1, r2d));
+
+  /*rows["tempRow"] = plus(rows["El_Vel_Command"],0.001);
+  traces.push(addLine("tempRow", 2, 1, r2d, 'Lim', false));
+  rows["tempRow"] = plus(rows["El_Vel_Command"],-0.001);
+  traces.push(addLine("tempRow", 2, 1, r2d, 'Lim', false));*/
+
+  plotTraces(traces, 2, 2);
+
+}
+
+function IMUshake() {
+  cleanUp();
+
+  traces = [];
+  traces.push(addLine("Base_Gyro_Roll", 1));
+  traces.push(addLine("Base_Gyro_Pitch", 2));
+  traces.push(addLine("Base_Gyro_Yaw", 3));
+
+  plotTraces(traces, 3);
+}
+
+function Bits() {
+  cleanUp();
+  traces = [];
+  for (var i = 1; i < 7; i++) {
+    traces.push(addLine("Bit" + i + "_Tr", i, 1));
+    traces.push(addLine("Bit" + i + "_El", i, 2));
+  }
+
+  plotTraces(traces, 6, 2);
+}
+
+
+function addLine(vName, ax_y = 1, ax_x = 1, factor = 1, showName, showLeg = true, allRows) {
+
+  if (showName === undefined) {
+    showName = vName.replace(/_/g, " ");
+  }
+
+  let x = [];
+  let y = [];
+
+  var x_axis = "time";
+  x = rows[x_axis];
+  y = mult(rows[vName], factor);
+  var trace = {
+    x: x,
+    y: y,
+    xaxis: 'x' + ax_x,
+    yaxis: 'y' + ax_y,
+    name: showName,
+    type: 'scatter',
+    showlegend: showLeg,
+  };
+  if (!showLeg) {
+    trace.line = {
+      color: 'Red',
+      width: 2,
+    };
+  }
+  return trace;
+}
+//plotFromCSV();
+
+
+function addLimitLineTraces(ax_y = 1, ax_x = 1, val) {
+
+  var lim1 = {
+    x: [window.rows["time"][0], window.rows["time"].slice(-1)[0]],
+    y: [val, val],
+    xaxis: 'x' + ax_x,
+    yaxis: 'y' + ax_y,
+    name: 'Limit',
+    mode: 'line',
+    line: {
+      color: 'Red',
+      width: 2,
+    },
+    showlegend: false,
+  }
+  return lim1;
+}
+
+function addLineBin(vName, ax, allRows) {
+  let x = [];
+  let y = [];
+
+  var x_axis = "time";
+  x = rows[x_axis];
+  y = rows[vName];
+  var trace = {
+    x: x,
+    y: y,
+    yaxis: 'y' + ax,
+    name: vName,
+    type: 'scatter',
+  };
+  return trace;
+}
+
+function plotTraces(traces, sp_r = 2, sp_c = 1) {
+  var layout = {
+    height: window.innerHeight,
+    title: {
+      text: this.fileName,
+      font: {
+        size: 24
+      },
+    },
+    grid: {
+      rows: sp_r,
+      columns: sp_c,
+      pattern: 'coupled',
+    },
+    yaxis: {title: 'Y Axis 1'},
+    yaxis2: {title: 'Y Axis 2'},
+    annotation: [
+      {
+        xref: 'paper',
+        yref: 'paper',
+        x: 0,
+        xanchor: 'right',
+        y: 1,
+        yanchor: 'bottom',
+        text: 'test',
+        showarrow: false
+      }
+    ],
+    showlegend: false
+  };
+
+  //https://plot.ly/javascript/configuration-options/
+  let config = {
+    responsive: true,
+    // staticPlot: true,
+    // editable: true
+  };
+
+  Plotly.newPlot("plot-area", traces, layout, { editable: true });
+}
+
 
 function processData() {
   rows["padestalAimCmdTr"] = rows["outAimingAlgDebugOutfSpare5"];

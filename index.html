@@ -32,11 +32,12 @@
     <a onclick="markDataTips()" title="Data Tips"><i class="fa fa-map-marker"></i></a>
     <a onclick="showStat()" title="Show Statistics"><i class="fa fa-list-ol"></i></a>
     <a onclick="alert('Hope I helped you understand your data.\nFor support, contact me:\nAmihay Blau\nmail: amihay@blau-eng.co.il\nPhone: +972-54-6668902');" title="Show Statistics"><i class="fa fa-info-circle"></i></a>
-    <img onclick="alert('Hope I helped you understand your data.\nFor support, contact me:\nAmihay Blau\nmail: amihay@blau-eng.co.il\nPhone: +972-54-6668902');" 
+    <img onclick="alert('Hope I helped you understand your data.\nFor support, contact me:\nAmihay Blau\nmail: amihay@blaurobotics.co.il\nPhone: +972-54-6668902');" 
 			height="36" src="images/logo-title.svg" alt="Blau Robotics" id="LogoBlau">
   </div>
   <div class="sidenav" id="sidenav">
-    <a href="#" class="button"  onclick="replacePic('images/show_sensors.png'); replaceText('ShowSensors');">Show Sensors</a>
+    <!-- <a href="#" class="button"  onclick="replacePic('images/show_sensors.png'); replaceText('ShowSensors');">Show Sensors</a> -->
+    <a href="#" class="button"  onclick="ShowSensors();">Show Sensors</a>
     <!-- <a href="#" class="button"  onclick="replacePic('images/jump2EOD.png'); replaceText('jump2EOD');">Enslave to EOD</a> -->
     <a href="#" class="button"  onclick="jump2EOD();">Enslave to EOD</a>
     <a href="#" class="button"  onclick="eod_cross();">Slave to EOD</a>
@@ -44,7 +45,7 @@
     <a href="#" class="button"  onclick="slv2eod_moveRange();">EL Movement Range</a>
     <a href="#" class="button"  onclick="slv2msl_cross();">Slave to Missile</a>
     <a href="#" class="button"  onclick="slv2msl_squint();">Sector Limits Squint</a>
-    <a href="#" class="button"  onclick="replacePic('images/msl_squint.png'); replaceText('msl_squint');">EOD & Missile Handshake</a>
+    <a href="#" class="button"  onclick="handshake();">EOD & Missile Handshake</a>
     <a href="#" class="button"  onclick="checkBits();">Check Bits</a>
     <div id="xaxis_dropdown"></div>
     <div class="checkboxesPlace" id="checkboxesPlace"></div>
@@ -65,7 +66,7 @@
     Good luck!<br>
   </div>
   </div>
-  <div class="plot" id="plot">
+  <div class="plot-area" id="plot-area">
   </div>
   <script src="reveal.js"></script>
 </body>
