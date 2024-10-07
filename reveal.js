@@ -13,6 +13,27 @@ fileSelector.addEventListener('change', (event) => {
 });
 
 
+function handleDrop(event) {
+  event.preventDefault();
+  document.getElementById('explenation_text').classList.remove('pale');
+  var file = event.dataTransfer.files[0];
+  readFile(file);
+  //document.getElementById('drop_zone').style.display = 'none';
+}
+
+function handleDragOver(event) {
+  event.preventDefault();
+  //event.target.style.backgroundColor = "#59F2F7";
+  document.getElementById('explenation_text').classList.add('pale');
+}
+
+function handleDragLeave(event) {
+  event.preventDefault();
+  //event.target.style.backgroundColor = "#59F2F7";
+  document.getElementById('explenation_text').classList.remove('pale');
+}
+
+
 function readFile(file) {
   //console.log(file);
 
@@ -354,8 +375,8 @@ function jump2EOD() {
   plot(pl, 0, 1, rows.time, rows.padestalAimCmdEl, traceName = 'Aim Command', title="Elevation<br>Padestal Aim Command", "", "Angle [deg]");
   plot(pl, 0, 1, rows.time, rows.inWS_SensorsstResolversfTheta, traceName = 'Padestal Angle', title="Padestal Aim Command", "", "Angle [deg]");
 
-  plot(pl, 1, 0, rows.time, rows.padestalAimErrTr, traceName = 'Aim Error', title="Padestal Aim Error", "", "Angle [deg]");
-  plot(pl, 1, 1, rows.time, rows.padestalAimErrEl, traceName = 'Aim Error', title="Padestal Aim Error", "", "Angle [deg]");
+  plot(pl, 1, 0, rows.time, rows.padestalAimErrTr, traceName = 'Aim Error', title="Padestal Aim Error<br>Final Error: " + lastVal(rows.padestalAimErrTr) + " [deg]", "", "Angle [deg]");
+  plot(pl, 1, 1, rows.time, rows.padestalAimErrEl, traceName = 'Aim Error', title="Padestal Aim Error<br>Final Error: " + lastVal(rows.padestalAimErrEl) + " [deg]", "", "Angle [deg]");
   
   plot(pl, 2, 0, rows.time, rows.inLEUfMissile_RelAngle_Tr_M, traceName = 'Msl Tr Ang', title="Missile Eye", "Time [s]", "Angle [deg]");
   plot(pl, 2, 1, rows.time, rows.inLEUfMissile_RelAngle_El_M, traceName = 'Msl El Ang', title="Missile Eye", "Time [s]", "Angle [deg]");
@@ -1165,6 +1186,8 @@ const maxNegative = arr => {
 //const maxNegative = arr => Math.max(...arr.filter(num => num < 0));   // the maximum of only the negtive numbers (closest to zero)
 
 let strClean = (str) => str.replace(/[^a-zA-Z0-9 ]/g, "");
+
+let lastVal = (arr) => (parseFloat(arr.slice(-1)[0])*r2d).toFixed(1);
 
 let r2d = 180 / 3.1416;
 let d2r = 3.1416 / 180;

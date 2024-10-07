@@ -137,6 +137,12 @@ body {
     overflow-y: auto;
   }
 
+  .pale {
+    transition: background-color 0.3s ease;
+    background-color: rgba(0, 0, 0, 0.1);
+    opacity: 0.5;
+  }
+
   #explenation_text {
     top: 100;
     margin-left: 300px; /* Same as the width of the sidenav */
