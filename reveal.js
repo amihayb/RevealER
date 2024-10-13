@@ -15,7 +15,7 @@ fileSelector.addEventListener('change', (event) => {
 
 function handleDrop(event) {
   event.preventDefault();
-  document.getElementById('explenation_text').classList.remove('pale');
+  document.getElementById('drop-zone').classList.remove('pale');
   var file = event.dataTransfer.files[0];
   readFile(file);
   //document.getElementById('drop_zone').style.display = 'none';
@@ -24,13 +24,13 @@ function handleDrop(event) {
 function handleDragOver(event) {
   event.preventDefault();
   //event.target.style.backgroundColor = "#59F2F7";
-  document.getElementById('explenation_text').classList.add('pale');
+  document.getElementById('drop-zone').classList.add('pale');
 }
 
 function handleDragLeave(event) {
   event.preventDefault();
   //event.target.style.backgroundColor = "#59F2F7";
-  document.getElementById('explenation_text').classList.remove('pale');
+  document.getElementById('drop-zone').classList.remove('pale');
 }
 
 
