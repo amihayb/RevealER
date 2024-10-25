@@ -29,12 +29,11 @@
     </span>
     <a onclick="export2csv()" title="Export to CSV"><i class="fa fa-save"></i></a>
     <a onclick="cutToZoom()" title="Cut to Zoomed Area"><i class="fa fa-cut"></i></a>
-    <a onclick="markDataTips()" title="Data Tips"><i class="fa fa-map-marker"></i></a>
-    <a onclick="showStat()" title="Show Statistics"><i class="fa fa-list-ol"></i></a>
-    <a onclick="alert('Hope I helped you understand your data.\nFor support, contact me:\nAmihay Blau\nmail: amihay@blau-eng.co.il\nPhone: +972-54-6668902');"
+    <a onclick="openLimitsModal()" title="Set Limits"><i class="fa fa-arrows"></i></a>
+    <a onclick="alert('Hope I helped you understand your data.\n\nFor support, contact me:\nAmihay Blau\nmail: amihay@blaurobotics.co.il\nPhone: +972-54-6668902');"
       title="About"><i class="fa fa-info-circle"></i></a>
     <img
-      onclick="alert('Hope I helped you understand your data.\nFor support, contact me:\nAmihay Blau\nmail: amihay@blaurobotics.co.il\nPhone: +972-54-6668902');"
+      onclick="alert('Hope I helped you understand your data.\n\nFor support, contact me:\nAmihay Blau\nmail: amihay@blaurobotics.co.il\nPhone: +972-54-6668902');"
       height="36" src="images/logo-title.svg" alt="Blau Robotics" id="LogoBlau">
   </div>
   <div class="sidenav" id="sidenav">
@@ -52,35 +51,57 @@
     <div id="xaxis_dropdown"></div>
     <div class="checkboxesPlace" id="checkboxesPlace"></div>
   </div>
-  <div id="drop-zone" ondrop="handleDrop(event)" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)">
-  <div id="explenation_text">
-    Drag & Drop CSV File Here
-    <picture id="picture_main">
-      <source media="(min-width: 1024px)"
-        data-srcset="https://www.rafael.co.il/wp-content/uploads/2024/03/NAVAL-SPIKE-ER-1.png"
-        srcset="https://www.rafael.co.il/wp-content/uploads/2024/03/NAVAL-SPIKE-ER-1.png">
-      <source media="(min-width: 768px)"
-        data-srcset="https://www.rafael.co.il/wp-content/uploads/2024/03/NAVAL-SPIKE-ER-1-1024x587.png"
-        srcset="https://www.rafael.co.il/wp-content/uploads/2024/03/NAVAL-SPIKE-ER-1-1024x587.png">
-      <source media="(min-width: 300px)"
-        data-srcset="https://www.rafael.co.il/wp-content/uploads/2024/03/NAVAL-SPIKE-ER-1-768x440.png"
-        srcset="https://www.rafael.co.il/wp-content/uploads/2024/03/NAVAL-SPIKE-ER-1-768x440.png">
-      <img id="img_main" data-src="https://www.rafael.co.il/wp-content/uploads/2024/03/NAVAL-SPIKE-ER-1-150x150.png"
-        alt="" width="1240" height="711" class="lazy thumb-img entered loaded" data-ll-status="loaded"
-        src="https://www.rafael.co.il/wp-content/uploads/2024/03/NAVAL-SPIKE-ER-1-150x150.png">
-    </picture>
-    <br><br><br>
-    <div id="explenation_label">
-      Reveal – Visualize your data<br>
+  <div id="drop-zone" ondrop="handleDrop(event)" ondragover="handleDragOver(event)"
+    ondragleave="handleDragLeave(event)">
+    <div id="explenation_text">
+      Drag & Drop CSV File Here
       <br>
-      • Load Telemetry Records.<br>
-      • Select the appropriate test button to visualize scenario data.<br>
-      <br>
-      Best of luck!<br>
+      <picture id="picture_main">
+        <source media="(min-width: 1024px)"
+          data-srcset="https://www.rafael.co.il/wp-content/uploads/2024/03/NAVAL-SPIKE-ER-1.png"
+          srcset="https://www.rafael.co.il/wp-content/uploads/2024/03/NAVAL-SPIKE-ER-1.png">
+        <source media="(min-width: 768px)"
+          data-srcset="https://www.rafael.co.il/wp-content/uploads/2024/03/NAVAL-SPIKE-ER-1-1024x587.png"
+          srcset="https://www.rafael.co.il/wp-content/uploads/2024/03/NAVAL-SPIKE-ER-1-1024x587.png">
+        <source media="(min-width: 300px)"
+          data-srcset="https://www.rafael.co.il/wp-content/uploads/2024/03/NAVAL-SPIKE-ER-1-768x440.png"
+          srcset="https://www.rafael.co.il/wp-content/uploads/2024/03/NAVAL-SPIKE-ER-1-768x440.png">
+        <img id="img_main" data-src="https://www.rafael.co.il/wp-content/uploads/2024/03/NAVAL-SPIKE-ER-1-150x150.png"
+          alt="" width="1240" height="711" class="lazy thumb-img entered loaded" data-ll-status="loaded"
+          src="https://www.rafael.co.il/wp-content/uploads/2024/03/NAVAL-SPIKE-ER-1-150x150.png">
+      </picture>
+      <br><br><br>
+      <div id="explenation_label">
+        Reveal – Visualize your data<br>
+        <br>
+        • Load Telemetry Records.<br>
+        • Select the appropriate test button to visualize scenario data.<br>
+        <br>
+        Best of luck!<br>
+      </div>
+    </div>
+    <table id="resultsTable" border="1"></table>
+    <!-- Table will be populated by JavaScript -->
+    </table>
+    <div class="plot-area" id="plot-area">
     </div>
   </div>
-  <div class="plot-area" id="plot-area">
-  </div>
+  <div id="limitsModal" class="modal limits-modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeLimitsModal()">&times;</span>
+        <h2>Set Movement Limits</h2>
+        <form id="parameterForm">
+            <label for="LimitTr1">Traverse Limit 1:</label><br>
+            <input type="text" id="LimitTr1" name="LimitTr1" value="330"><br>
+            <label for="LimitTr2">Traverse Limit 2:</label><br>
+            <input type="text" id="LimitTr2" name="LimitTr2" value="30"><br>
+            <label for="LimitEl1">Elevation Limit 1:</label><br>
+            <input type="text" id="LimitEl1" name="LimitEl1" value="-30"><br>
+            <label for="LimitEl2">Elevation Limit 2:</label><br>
+            <input type="text" id="LimitEl2" name="LimitEl2" value="60"><br><br>
+            <button type="button" onclick="submitForm()">Submit</button>
+        </form>
+    </div>
 </div>
   <script src="reveal.js"></script>
 </body>

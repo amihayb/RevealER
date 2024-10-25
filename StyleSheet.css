@@ -160,7 +160,7 @@ body {
 
   .plot-area {
     margin-left: 260px; /* Same as the width of the sidenav */
-    margin-top: 100px; /* Same as the width of the sidenav */
+    /*margin-top: 100px; /* Same as the width of the sidenav */
     font-size: 28px; /* Increased text to enable scrolling */
     padding: 0px 0px;
   }
@@ -207,6 +207,108 @@ body {
       height: 100%;
     }
 
+    /* The results Table */
+    #resultsTable {
+            border-collapse: collapse;
+            margin: 0 auto; /* Center the table */
+            margin-top: 60px; /* Same as the width of the topnav */
+        }
+
+        #resultsTable th, #resultsTable td {
+            border: 1px solid black;
+            padding: 8px;
+        }
+
+        #resultsTable th {
+            background-color: #f7faff;
+        }
+
+        /* Ensure table fits the content */
+        #resultsTable, th, td {
+            width: auto;
+            height: auto;
+            white-space: nowrap;
+        }
+    
+
+        .modal {
+          display: none; /* Hide the modal by default */
+          position: fixed;
+          z-index: 1;
+          left: 0;
+          top: 0;
+          width: 100%;
+          height: 100%;
+          overflow: auto;
+          background-color: rgba(0,0,0,0.4);
+          padding-top: 90px;
+          padding-left: 310px;
+      }
+
+      .limits-modal .modal-content {
+          position: absolute;
+          background-color: #fefefe;
+          margin: auto;
+          padding: 20px;
+          border: 1px solid #888;
+          width: 80%;
+          max-width: 300px;
+          text-align: center; /* Center content */
+          box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+          animation-name: animatetop;
+          animation-duration: 0.4s;
+      }
+
+      @keyframes animatetop {
+          from {top: -300px; opacity: 0}
+          to {top: 0; opacity: 1}
+      }
+
+      .limits-modal .close {
+          color: #aaa;
+          float: right;
+          font-size: 28px;
+          font-weight: bold;
+      }
+
+      .limits-modal .close:hover,
+      .limits-modal .close:focus {
+          color: black;
+          text-decoration: none;
+          cursor: pointer;
+      }
+
+      .limits-modal label {
+          color: #344563; /* Color for the labels */
+      }
+
+      .limits-modal input[type="text"] {
+          width: calc(100% - 24px);
+          padding: 8px;
+          margin: 8px 0;
+          display: inline-block;
+          border: 1px solid #ccc;
+          box-sizing: border-box;
+          text-align: center; /* Center the input text */
+      }
+
+      .limits-modal button {
+          background-color: #c9dbf9; /* Updated background color */
+          color: #344563; /* Updated font color */
+          padding: 14px 20px;
+          margin: 8px 0;
+          border: none;
+          cursor: pointer;
+          width: 100%;
+      }
+
+      .limits-modal button:hover {
+          opacity: 0.8;
+      }
+
+      .limits-modal h2 {
+          color: #344563;
+      }
 
     
   /* Create a custom checkbox */

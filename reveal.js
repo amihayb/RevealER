@@ -74,12 +74,12 @@ function readFile(file) {
     function getHeader(resultlines) {
 
       headerObj = {
-        header: ['time', 'inCalibProcess', 'inEnslaverUnit', 'inMissileCmdInvalid', 'inMissileNumber', 'inAimCorrfPsi', 'inAimCorrfTheta', 'inBorsightCorrectionfPsi', 'inBorsightCorrectionfTheta', 
-          'inEodSensstEodAngles_RangefRange', 'inEodSensstEodAngles_RangestAnglesfPsi', 'inEodSensstEodAngles_RangestAnglesfTheta', 'inEodSensstGyrofPsi', 'inEodSensstGyrofTheta', 
-          'inKFSignalsIsFirstRange', 'inKFSignalsIsFreshData', 'inKFSignalsIsFreshRange', 'inKFSignalsRangeSource', 'inLEUfMissile_RelAngle_El_M', 'inLEUfMissile_RelAngle_Tr_M', 
-          'inWS_SensorsstGyrofPsi', 'inWS_SensorsstGyrofTheta', 'inWS_SensorsstResolversfPsi', 'inWS_SensorsstResolversfTheta', 'outMissileActivationBit', 'outPosCmdValid', 
-          'outAimingAlgDebugOutfSpare1', 'outAimingAlgDebugOutfSpare2', 'outAimingAlgDebugOutfSpare3', 'outAimingAlgDebugOutfSpare4', 'outAimingAlgDebugOutfSpare5', 'outAimingAlgDebugOutfSpare6', 
-          'outMissileCmdElAngleCmd', 'outMissileCmdTrAngleCmd', 'outWsCmdstElevationPosCmd', 'outWsCmdstElevationTrackerRate', 'outWsCmdstTraversePosCmd', 'outWsCmdstTraverseTrackerRate', 
+        header: ['time', 'inCalibProcess', 'inEnslaverUnit', 'inMissileCmdInvalid', 'inMissileNumber', 'inAimCorrfPsi', 'inAimCorrfTheta', 'inBorsightCorrectionfPsi', 'inBorsightCorrectionfTheta',
+          'inEodSensstEodAngles_RangefRange', 'inEodSensstEodAngles_RangestAnglesfPsi', 'inEodSensstEodAngles_RangestAnglesfTheta', 'inEodSensstGyrofPsi', 'inEodSensstGyrofTheta',
+          'inKFSignalsIsFirstRange', 'inKFSignalsIsFreshData', 'inKFSignalsIsFreshRange', 'inKFSignalsRangeSource', 'inLEUfMissile_RelAngle_El_M', 'inLEUfMissile_RelAngle_Tr_M',
+          'inWS_SensorsstGyrofPsi', 'inWS_SensorsstGyrofTheta', 'inWS_SensorsstResolversfPsi', 'inWS_SensorsstResolversfTheta', 'outMissileActivationBit', 'outPosCmdValid',
+          'outAimingAlgDebugOutfSpare1', 'outAimingAlgDebugOutfSpare2', 'outAimingAlgDebugOutfSpare3', 'outAimingAlgDebugOutfSpare4', 'outAimingAlgDebugOutfSpare5', 'outAimingAlgDebugOutfSpare6',
+          'outMissileCmdElAngleCmd', 'outMissileCmdTrAngleCmd', 'outWsCmdstElevationPosCmd', 'outWsCmdstElevationTrackerRate', 'outWsCmdstTraversePosCmd', 'outWsCmdstTraverseTrackerRate',
           'outBITAimError_EL', 'outBITAimError_TR', 'outBITNoMovement_EL', 'outBITNoMovement_TR'],
         startIdx: 2
       }
@@ -178,12 +178,12 @@ function createPlotlyTable(m, n, containerId) {
 
 function plotlyTableToDiscrete(plotHandles) {
   plotHandles.forEach((row) => {
-      row.forEach((plotDiv) => {
-          const update = {
-              'yaxis.type': 'category'
-          };
-          Plotly.relayout(plotDiv.id, update);
-      });
+    row.forEach((plotDiv) => {
+      const update = {
+        'yaxis.type': 'category'
+      };
+      Plotly.relayout(plotDiv.id, update);
+    });
   });
 }
 
@@ -201,7 +201,7 @@ function plot(plotHandles, rowIndex, colIndex, xData, yData, traceName = null, t
     x: xData,
     y: yData,
     mode: mode,
-    marker: color ? { color: color } : {}, 
+    marker: color ? { color: color } : {},
     showlegend: showLeg
   };
   if (traceName !== null) {
@@ -214,7 +214,7 @@ function plot(plotHandles, rowIndex, colIndex, xData, yData, traceName = null, t
     },
     yaxis: {
       title: yLabel,
-    }, 
+    },
     legend: {
       x: 1,
       y: 1,
@@ -224,7 +224,7 @@ function plot(plotHandles, rowIndex, colIndex, xData, yData, traceName = null, t
 
   const config = {
     editable: true
-};
+  };
 
   // Check if the plot already exists
   if (plotDiv.data) {
@@ -237,14 +237,14 @@ function plot(plotHandles, rowIndex, colIndex, xData, yData, traceName = null, t
 }
 
 
-function addLimitLine(plotHandles, rowIndex, colIndex, val) {
+function addLimitLine(plotHandles, rowIndex, colIndex, val, dashed = 'solid') {
   if (rowIndex >= plotHandles.length || colIndex >= plotHandles[rowIndex].length) {
     console.error('Invalid cell index');
     return;
   }
 
   const plotDiv = plotHandles[rowIndex][colIndex];
-  val = val*r2d;
+  val = val * r2d;
 
   var lim1 = {
     x: [window.rows["time"][0], window.rows["time"].slice(-1)[0]],
@@ -254,6 +254,7 @@ function addLimitLine(plotHandles, rowIndex, colIndex, val) {
     line: {
       color: 'Red',
       width: 2,
+      dash: dashed
     },
     showlegend: false,
   }
@@ -261,9 +262,195 @@ function addLimitLine(plotHandles, rowIndex, colIndex, val) {
   //return lim1;
 }
 
+
+function addLimitLinesIfNear(plotHandles, rowIndex, colIndex, signal, limit1, limit2) {
+
+  if (signal.some(value => Math.sign(value) == Math.sign(limit1))) {
+    addLimitLine(plotHandles, rowIndex, colIndex, limit1);
+  }
+  if (signal.some(value => Math.sign(value) == Math.sign(limit2))) {
+    addLimitLine(plotHandles, rowIndex, colIndex, limit2);
+  }
+}
 /////////// End of Ploting Functions ///////////
 
 
+/////////// Show Results table Functions ///////////
+
+function drawTable(data) {
+  const table = document.getElementById('resultsTable');
+
+  if (!table) {
+    console.error('Table not found');
+    return;
+  }
+
+  const thead = document.createElement('thead');
+  const tbody = document.createElement('tbody');
+
+  const headers = ['Parameter', 'Traverese', 'Elevation', 'Success Criteria'];
+  const headerRow = document.createElement('tr');
+
+  headers.forEach(header => {
+    const th = document.createElement('th');
+    th.textContent = header;
+    th.style.textAlign = 'center';  // Center-align headers
+    headerRow.appendChild(th);
+  });
+
+  thead.appendChild(headerRow);
+  table.appendChild(thead);
+
+  data.forEach(item => {
+    const row = document.createElement('tr');
+    const cells = [item.parameter, item.value1.toFixed(2), item.value2.toFixed(2), item.successCriteria];
+
+    cells.forEach((cellValue, index) => {
+      const td = document.createElement('td');
+      td.textContent = cellValue;
+      td.style.textAlign = 'center';  // Center-align cell values
+
+      if (index > 0 && index < 3) { // Check only for Traverese and Elevation columns
+        if (Math.abs(cellValue) > item.successCriteria) {
+          td.style.color = 'red';
+        } else {
+          td.style.color = 'green';
+        }
+      }
+
+      row.appendChild(td);
+    });
+
+    tbody.appendChild(row);
+  });
+
+  table.appendChild(tbody);
+}
+
+function drawTableOneCol(data) {
+  const table = document.getElementById('resultsTable');
+
+  if (!table) {
+    console.error('Table not found');
+    return;
+  }
+
+  const thead = document.createElement('thead');
+  const tbody = document.createElement('tbody');
+
+  const headers = ['Parameter', 'Value', 'Success Criteria'];
+  const headerRow = document.createElement('tr');
+
+  headers.forEach(header => {
+    const th = document.createElement('th');
+    th.textContent = header;
+    th.style.textAlign = 'center';  // Center-align headers
+    headerRow.appendChild(th);
+  });
+
+  thead.appendChild(headerRow);
+  table.appendChild(thead);
+
+  data.forEach(item => {
+    const row = document.createElement('tr');
+    const cells = [item.parameter, item.value1.toFixed(2), item.successCriteria.toFixed(2)];
+
+    cells.forEach((cellValue, index) => {
+      const td = document.createElement('td');
+      td.textContent = cellValue;
+      td.style.textAlign = 'center';  // Center-align cell values
+
+      if (item.successMethod === 'bigger')
+        success = item.value1 > item.successCriteria;
+
+      if (item.successMethod === 'smaller')
+        success = item.value1 < item.successCriteria;
+
+
+      if (index == 1) { // Check only for value column
+        if (success) {
+          td.style.color = 'green';
+        } else {
+          td.style.color = 'red';
+        }
+      }
+
+      row.appendChild(td);
+    });
+
+    tbody.appendChild(row);
+  });
+
+  table.appendChild(tbody);
+}
+
+
+/////////// End of Results Table Functions ///////////
+
+
+/////////// Set Limits Functions ///////////
+
+document.addEventListener('DOMContentLoaded', (event) => {
+  loadParameters();
+});
+
+function openLimitsModal() {
+  document.getElementById("limitsModal").style.display = "block";
+}
+
+function closeLimitsModal() {
+  document.getElementById("limitsModal").style.display = "none";
+}
+
+function submitForm() {
+  const LimitTr1 = document.getElementById("LimitTr1").value;
+  const LimitTr2 = document.getElementById("LimitTr2").value;
+  const LimitEl1 = document.getElementById("LimitEl1").value;
+  const LimitEl2 = document.getElementById("LimitEl2").value;
+
+  if (LimitTr1 && LimitTr2 && LimitEl1 && LimitEl2) {
+    saveParameters(LimitTr1, LimitTr2, LimitEl1, LimitEl2);
+    //alert(`Traverse Limit 1: ${LimitTr1}\nTraverse Limit 2: ${LimitTr2}\nElevation Limit 1: ${LimitEl1}\nElevation Limit 2: ${LimitEl2}`);
+    closeLimitsModal();
+  } else {
+    alert("All parameters are required!");
+  }
+}
+
+function saveParameters(LimitTr1, LimitTr2, LimitEl1, LimitEl2) {
+  localStorage.setItem('LimitTr1', LimitTr1);
+  localStorage.setItem('LimitTr2', LimitTr2);
+  localStorage.setItem('LimitEl1', LimitEl1);
+  localStorage.setItem('LimitEl2', LimitEl2);
+}
+
+function loadParameters() {
+  const LimitTr1 = localStorage.getItem('LimitTr1') || "-60";
+  const LimitTr2 = localStorage.getItem('LimitTr2') || "60";
+  const LimitEl1 = localStorage.getItem('LimitEl1') || "-30";
+  const LimitEl2 = localStorage.getItem('LimitEl2') || "60";
+
+  document.getElementById('LimitTr1').value = LimitTr1;
+  document.getElementById('LimitTr2').value = LimitTr2;
+  document.getElementById('LimitEl1').value = LimitEl1;
+  document.getElementById('LimitEl2').value = LimitEl2;
+}
+
+function getLimits() {
+
+  // Example usage:
+  // const limits = getLimits();
+  // console.log(`Traverse Limit 1: ${limits.LimitTr1}`
+
+  const LimitTr1 = d2r * localStorage.getItem('LimitTr1') || "-60";
+  const LimitTr2 = d2r * localStorage.getItem('LimitTr2') || "60";
+  const LimitEl1 = d2r * localStorage.getItem('LimitEl1') || "-30";
+  const LimitEl2 = d2r * localStorage.getItem('LimitEl2') || "60";
+
+  return { LimitTr1, LimitTr2, LimitEl1, LimitEl2 };
+}
+
+/////////// End of Set Limits Functions ///////////
 
 
 function replacePic(newPicTag) {
@@ -348,196 +535,304 @@ function ShowSensors() {
   // Missile Eye
 
   cleanUp();
-  const pl = createPlotlyTable(3,2, 'plot-area');
+  const pl = createPlotlyTable(3, 2, 'plot-area');
 
-  plot(pl, 0, 0, rows.time, rows.inEodSensstEodAngles_RangestAnglesfPsi, traceName = 'EOD Angle', title="Traverse<br>Angles", "", "Angle [deg]");
-  plot(pl, 0, 0, rows.time, rows.padestalAimCmdTr, traceName = 'Padestal Cmd', title="Traverse<br>Angles", "", "Angle [deg]");
-  plot(pl, 0, 0, rows.time, rows.inWS_SensorsstResolversfPsi, traceName = 'Padestal Angle', title="Traverse<br>Angles", "", "Angle [deg]");
+  plot(pl, 0, 0, rows.time, rows.inEodSensstEodAngles_RangestAnglesfPsi, traceName = 'EOD Angle', title = "Traverse<br>Angles", "", "Angle [deg]");
+  plot(pl, 0, 0, rows.time, rows.padestalAimCmdTr, traceName = 'Padestal Cmd', title = "Traverse<br>Angles", "", "Angle [deg]");
+  plot(pl, 0, 0, rows.time, rows.inWS_SensorsstResolversfPsi, traceName = 'Padestal Angle', title = "Traverse<br>Angles", "", "Angle [deg]");
 
-  plot(pl, 0, 1, rows.time, rows.inEodSensstEodAngles_RangestAnglesfTheta, traceName = 'EOD Angle', title="Elevation<br>Angles", "", "Angle [deg]");
-  plot(pl, 0, 1, rows.time, rows.padestalAimCmdEl, traceName = 'Padestal Cmd', title="Elevation<br>Angles", "", "Angle [deg]");
-  plot(pl, 0, 1, rows.time, rows.inWS_SensorsstResolversfTheta, traceName = 'Padestal Angle', title="Elevation<br>Angles", "", "Angle [deg]");
+  plot(pl, 0, 1, rows.time, rows.inEodSensstEodAngles_RangestAnglesfTheta, traceName = 'EOD Angle', title = "Elevation<br>Angles", "", "Angle [deg]");
+  plot(pl, 0, 1, rows.time, rows.padestalAimCmdEl, traceName = 'Padestal Cmd', title = "Elevation<br>Angles", "", "Angle [deg]");
+  plot(pl, 0, 1, rows.time, rows.inWS_SensorsstResolversfTheta, traceName = 'Padestal Angle', title = "Elevation<br>Angles", "", "Angle [deg]");
 
-  plot(pl, 1, 0, rows.time, rows.inWS_SensorsstGyrofPsi, traceName = 'Gyro Tr', title="Padestal Gyro", "", "Rate [deg/s]");
-  plot(pl, 1, 1, rows.time, rows.inWS_SensorsstGyrofTheta, traceName = 'Gyro El', title="Padestal Gyro", "", "Rate [deg/s]");
+  plot(pl, 1, 0, rows.time, rows.inWS_SensorsstGyrofPsi, traceName = 'Gyro Tr', title = "Padestal Gyro", "", "Rate [deg/s]");
+  plot(pl, 1, 1, rows.time, rows.inWS_SensorsstGyrofTheta, traceName = 'Gyro El', title = "Padestal Gyro", "", "Rate [deg/s]");
 
-  plot(pl, 2, 0, rows.time, rows.inLEUfMissile_RelAngle_Tr_M, traceName = 'Msl Tr Ang', title="Missile Eye", "Time [s]", "Angle [deg]");
-  plot(pl, 2, 1, rows.time, rows.inLEUfMissile_RelAngle_El_M, traceName = 'Msl El Ang', title="Missile Eye", "Time [s]", "Angle [deg]");
+  plot(pl, 2, 0, rows.time, rows.inLEUfMissile_RelAngle_Tr_M, traceName = 'Msl Tr Ang', title = "Missile Eye", "Time [s]", "Angle [deg]");
+  plot(pl, 2, 1, rows.time, rows.inLEUfMissile_RelAngle_El_M, traceName = 'Msl El Ang', title = "Missile Eye", "Time [s]", "Angle [deg]");
 }
 
 
 function jump2EOD() {
 
   cleanUp();
-  const pl = createPlotlyTable(3,2, 'plot-area');
-  plot(pl, 0, 0, rows.time, rows.padestalAimCmdTr, traceName = 'Aim Command', title="Traverse<br>Padestal Aim Command", "", "Angle [deg]");
-  plot(pl, 0, 0, rows.time, rows.inWS_SensorsstResolversfPsi, traceName = 'Padestal Angle', title="Padestal Aim Command", "", "Angle [deg]");
-  plot(pl, 0, 1, rows.time, rows.padestalAimCmdEl, traceName = 'Aim Command', title="Elevation<br>Padestal Aim Command", "", "Angle [deg]");
-  plot(pl, 0, 1, rows.time, rows.inWS_SensorsstResolversfTheta, traceName = 'Padestal Angle', title="Padestal Aim Command", "", "Angle [deg]");
 
-  plot(pl, 1, 0, rows.time, rows.padestalAimErrTr, traceName = 'Aim Error', title="Padestal Aim Error<br>Final Error: " + lastVal(rows.padestalAimErrTr) + " [deg]", "", "Angle [deg]");
-  plot(pl, 1, 1, rows.time, rows.padestalAimErrEl, traceName = 'Aim Error', title="Padestal Aim Error<br>Final Error: " + lastVal(rows.padestalAimErrEl) + " [deg]", "", "Angle [deg]");
-  
-  plot(pl, 2, 0, rows.time, rows.inLEUfMissile_RelAngle_Tr_M, traceName = 'Msl Tr Ang', title="Missile Eye", "Time [s]", "Angle [deg]");
-  plot(pl, 2, 1, rows.time, rows.inLEUfMissile_RelAngle_El_M, traceName = 'Msl El Ang', title="Missile Eye", "Time [s]", "Angle [deg]");
+  const results = [
+    { parameter: 'Total Aim Error', value1: lastVal(rows.totalAimErrTr), value2: lastVal(rows.totalAimErrEl), successCriteria: 0.5 },
+    { parameter: 'Padestal Aim Error', value1: lastVal(rows.padestalAimErrTr), value2: lastVal(rows.padestalAimErrEl), successCriteria: 1 },
+    { parameter: 'Missile Eye Angle', value1: lastVal(rows.inLEUfMissile_RelAngle_Tr_M), value2: lastVal(rows.inLEUfMissile_RelAngle_El_M) + 15, successCriteria: 6 }
+  ];
+  drawTable(results);
+
+  const pl = createPlotlyTable(3, 2, 'plot-area');
+  plot(pl, 0, 0, rows.time, rows.padestalAimCmdTr, traceName = 'Aim Command', title = "Traverse<br>Padestal Aim Command", "", "Angle [deg]");
+  plot(pl, 0, 0, rows.time, rows.inWS_SensorsstResolversfPsi, traceName = 'Padestal Angle', title = "Padestal Aim Command", "", "Angle [deg]");
+  plot(pl, 0, 1, rows.time, rows.padestalAimCmdEl, traceName = 'Aim Command', title = "Elevation<br>Padestal Aim Command", "", "Angle [deg]");
+  plot(pl, 0, 1, rows.time, rows.inWS_SensorsstResolversfTheta, traceName = 'Padestal Angle', title = "Padestal Aim Command", "", "Angle [deg]");
+
+  plot(pl, 1, 0, rows.time, rows.padestalAimErrTr, traceName = 'Aim Error', title = "Padestal Aim Error<br>Final Error: " + lastVal(rows.padestalAimErrTr).toFixed(1) + " [deg]", "", "Angle [deg]");
+  plot(pl, 1, 1, rows.time, rows.padestalAimErrEl, traceName = 'Aim Error', title = "Padestal Aim Error<br>Final Error: " + lastVal(rows.padestalAimErrEl).toFixed(1) + " [deg]", "", "Angle [deg]");
+
+  plot(pl, 2, 0, rows.time, rows.inLEUfMissile_RelAngle_Tr_M, traceName = 'Msl Tr Ang', title = "Missile Eye", "Time [s]", "Angle [deg]");
+  plot(pl, 2, 1, rows.time, rows.inLEUfMissile_RelAngle_El_M, traceName = 'Msl El Ang', title = "Missile Eye", "Time [s]", "Angle [deg]");
 }
 
 
 function eod_cross() {
   cleanUp();
-  const pl = createPlotlyTable(3,2, 'plot-area');
 
-  plot(pl, 0, 0, rows.time, rows.inEodSensstEodAngles_RangestAnglesfPsi, traceName = 'EOD Angle', title="Traverse<br>Angles", "", "Angle [deg]");
-  plot(pl, 0, 0, rows.time, rows.padestalAimCmdTr, traceName = 'Padestal Cmd', title="Traverse<br>Angles", "", "Angle [deg]");
-  plot(pl, 0, 0, rows.time, rows.inWS_SensorsstResolversfPsi, traceName = 'Padestal Angle', title="Traverse<br>Angles", "", "Angle [deg]");
+  const results = [
+    { parameter: 'Maximal Total Aim Error', value1: maxAbs(rows.totalAimErrTr), value2: maxAbs(rows.totalAimErrEl), successCriteria: 1 },
+    { parameter: 'Maximal Padestal Aim Error', value1: maxAbs(rows.padestalAimErrTr), value2: maxAbs(rows.padestalAimErrEl), successCriteria: 6 },
+    { parameter: 'Maximal Missile Eye Angle', value1: maxAbs(rows.inLEUfMissile_RelAngle_Tr_M), value2: maxAbs(rows.inLEUfMissile_RelAngle_El_M) + 15, successCriteria: 6 }
+  ];
+  drawTable(results);
 
-  plot(pl, 0, 1, rows.time, rows.inEodSensstEodAngles_RangestAnglesfTheta, traceName = 'EOD Angle', title="Elevation<br>Angles", "", "Angle [deg]");
-  plot(pl, 0, 1, rows.time, rows.padestalAimCmdEl, traceName = 'Padestal Cmd', title="Elevation<br>Angles", "", "Angle [deg]");
-  plot(pl, 0, 1, rows.time, rows.inWS_SensorsstResolversfTheta, traceName = 'Padestal Angle', title="Elevation<br>Angles", "", "Angle [deg]");
 
-  plot(pl, 1, 0, rows.time, rows.outWsCmdstTraversePosCmd, traceName = 'WS Cmd', title="Padestal Command / Position Error", "", "Angle [deg]");
-  plot(pl, 1, 1, rows.time, rows.outWsCmdstElevationPosCmd, traceName = 'WS Cmd', title="Padestal Command / Position Error", "", "Angle [deg]");
+  const pl = createPlotlyTable(3, 2, 'plot-area');
 
-  plot(pl, 2, 0, rows.time, rows.inLEUfMissile_RelAngle_Tr_M, traceName = 'Msl Tr Ang', title="Missile Eye", "Time [s]", "Angle [deg]");
-  plot(pl, 2, 1, rows.time, rows.inLEUfMissile_RelAngle_El_M, traceName = 'Msl El Ang', title="Missile Eye", "Time [s]", "Angle [deg]");
+  plot(pl, 0, 0, rows.time, rows.inEodSensstEodAngles_RangestAnglesfPsi, traceName = 'EOD Angle', title = "Traverse<br>Angles", "", "Angle [deg]");
+  plot(pl, 0, 0, rows.time, rows.padestalAimCmdTr, traceName = 'Padestal Cmd', title = "Traverse<br>Angles", "", "Angle [deg]");
+  plot(pl, 0, 0, rows.time, rows.inWS_SensorsstResolversfPsi, traceName = 'Padestal Angle', title = "Traverse<br>Angles", "", "Angle [deg]");
+
+  plot(pl, 0, 1, rows.time, rows.inEodSensstEodAngles_RangestAnglesfTheta, traceName = 'EOD Angle', title = "Elevation<br>Angles", "", "Angle [deg]");
+  plot(pl, 0, 1, rows.time, rows.padestalAimCmdEl, traceName = 'Padestal Cmd', title = "Elevation<br>Angles", "", "Angle [deg]");
+  plot(pl, 0, 1, rows.time, rows.inWS_SensorsstResolversfTheta, traceName = 'Padestal Angle', title = "Elevation<br>Angles", "", "Angle [deg]");
+
+  plot(pl, 1, 0, rows.time, rows.outWsCmdstTraversePosCmd, traceName = 'WS Cmd', title = "Padestal Command / Position Error", "", "Angle [deg]");
+  plot(pl, 1, 1, rows.time, rows.outWsCmdstElevationPosCmd, traceName = 'WS Cmd', title = "Padestal Command / Position Error", "", "Angle [deg]");
+
+  plot(pl, 2, 0, rows.time, rows.inLEUfMissile_RelAngle_Tr_M, traceName = 'Msl Tr Ang', title = "Missile Eye", "Time [s]", "Angle [deg]");
+  plot(pl, 2, 1, rows.time, rows.inLEUfMissile_RelAngle_El_M, traceName = 'Msl El Ang', title = "Missile Eye", "Time [s]", "Angle [deg]");
 }
 
 
-function slv2eod_moveRange(){
+function slv2eod_moveRange() {
   cleanUp();
-  
-  limTr = [maxNegative(rows["inWS_SensorsstResolversfPsi"]), minPositive(rows["inWS_SensorsstResolversfPsi"])];
-  limEl = [Math.min(...rows["inWS_SensorsstResolversfTheta"]), Math.max(...rows["inWS_SensorsstResolversfTheta"])]
-  
-  console.log(limTr);
-  console.log(limEl);
 
-  const pl = createPlotlyTable(1,2, 'plot-area');
+  edgeTr = [maxNegative(rows["inWS_SensorsstResolversfPsi"]), minPositive(rows["inWS_SensorsstResolversfPsi"])];
+  edgeEl = [Math.min(...rows["inWS_SensorsstResolversfTheta"]), Math.max(...rows["inWS_SensorsstResolversfTheta"])]
 
-  plot(pl, 0, 0, rows.time, rows.padestalAimCmdTr, traceName = 'EOD', title="Traverse", "Time [s]", "Angle [deg]");
-  plot(pl, 0, 0, rows.time, rows.inWS_SensorsstResolversfPsi, traceName = 'Padestal', title="Traverse", "Time [s]", "Angle [deg]");
+  console.log(edgeTr);
+  console.log(edgeEl);
 
-  plot(pl, 0, 1, rows.time, rows.padestalAimCmdEl, traceName = 'EOD', title="Elevation", "Time [s]", "Angle [deg]");
-  plot(pl, 0, 1, rows.time, rows.inWS_SensorsstResolversfTheta, traceName = 'Padestal', title="Elevation", "Time [s]", "Angle [deg]");
-  
-  addLimitLine(pl, 0, 0, limTr[0]);
-  addLimitLine(pl, 0, 0, limTr[1]);
-  addLimitLine(pl, 0, 1, limEl[0]);
-  addLimitLine(pl, 0, 1, limEl[1]);
+  const pl = createPlotlyTable(1, 2, 'plot-area');
 
+  plot(pl, 0, 0, rows.time, rows.padestalAimCmdTr, traceName = 'EOD', title = "Traverse", "Time [s]", "Angle [deg]");
+  plot(pl, 0, 0, rows.time, rows.inWS_SensorsstResolversfPsi, traceName = 'Padestal', title = "Traverse", "Time [s]", "Angle [deg]");
+
+  plot(pl, 0, 1, rows.time, rows.padestalAimCmdEl, traceName = 'EOD', title = "Elevation", "Time [s]", "Angle [deg]");
+  plot(pl, 0, 1, rows.time, rows.inWS_SensorsstResolversfTheta, traceName = 'Padestal', title = "Elevation", "Time [s]", "Angle [deg]");
+
+  addLimitLine(pl, 0, 0, edgeTr[0]);
+  addLimitLine(pl, 0, 0, edgeTr[1]);
+  addLimitLine(pl, 0, 1, edgeEl[0]);
+  addLimitLine(pl, 0, 1, edgeEl[1]);
+
+  const limits = getLimits();
+  addLimitLinesIfNear(pl, 0, 0, rows.inWS_SensorsstResolversfPsi, limits.LimitTr1, limits.LimitTr2);
+  addLimitLinesIfNear(pl, 0, 1, rows.inWS_SensorsstResolversfTheta, limits.LimitEl1, limits.LimitEl2);
 }
 
 
-function slv2eod_moveRangeTR(){
+function slv2eod_moveRangeTR() {
   cleanUp();
-  
-  limTr = [maxNegative(rows["inWS_SensorsstResolversfPsi"]), minPositive(rows["inWS_SensorsstResolversfPsi"])];
-  
-  console.log(limTr);
+  const limits = getLimits();
 
-  const pl = createPlotlyTable(1,1, 'plot-area');
+  edgeTr = [maxNegative(rows["inWS_SensorsstResolversfPsi"]), minPositive(rows["inWS_SensorsstResolversfPsi"])];
 
-  plot(pl, 0, 0, rows.time, rows.padestalAimCmdTr, traceName = 'EOD', title="Traverse", "Time [s]", "Angle [deg]");
-  plot(pl, 0, 0, rows.time, rows.inWS_SensorsstResolversfPsi, traceName = 'Padestal', title="Traverse", "Time [s]", "Angle [deg]");
-  
-  addLimitLine(pl, 0, 0, limTr[0]);
-  addLimitLine(pl, 0, 0, limTr[1]);
+
+  const results = [];
+  if (edgeTr[0] < 0) {
+    results.push({
+      parameter: 'Traverse Padestal Min. Angle',
+      value1: edgeTr[0] * r2d,
+      successCriteria: min([limits.LimitTr1, limits.LimitTr2]),
+      successMethod: 'smaller'
+    });
+  }
+  if (edgeTr[1] > 0) {
+    results.push({
+      parameter: 'Traverse Padestal Max. Angle',
+      value1: edgeTr[1] * r2d,
+      successCriteria: max([limits.LimitTr1, limits.LimitTr2]),
+      successMethod: 'bigger'
+    });
+  }
+  drawTableOneCol(results);
+
+  const pl = createPlotlyTable(1, 1, 'plot-area');
+
+  plot(pl, 0, 0, rows.time, rows.padestalAimCmdTr, traceName = 'EOD', title = "Traverse", "Time [s]", "Angle [deg]");
+  plot(pl, 0, 0, rows.time, rows.inWS_SensorsstResolversfPsi, traceName = 'Padestal', title = "Traverse", "Time [s]", "Angle [deg]");
+
+  addLimitLine(pl, 0, 0, edgeTr[0], 'dash');
+  addLimitLine(pl, 0, 0, edgeTr[1], 'dash');
+  addLimitLinesIfNear(pl, 0, 0, rows.inWS_SensorsstResolversfPsi, limits.LimitTr1, limits.LimitTr2);
 }
 
-function slv2eod_moveRangeEL(){
+function slv2eod_moveRangeEL() {
   cleanUp();
-  
-  limEl = [Math.min(...rows["inWS_SensorsstResolversfTheta"]), Math.max(...rows["inWS_SensorsstResolversfTheta"])]
-  
-  console.log(limEl);
+  const limits = getLimits();
 
-  const pl = createPlotlyTable(1,1, 'plot-area');
+  edgeEl = [Math.min(...rows["inWS_SensorsstResolversfTheta"]), Math.max(...rows["inWS_SensorsstResolversfTheta"])]
 
-  plot(pl, 0, 0, rows.time, rows.padestalAimCmdEl, traceName = 'EOD', title="Elevation", "Time [s]", "Angle [deg]");
-  plot(pl, 0, 0, rows.time, rows.inWS_SensorsstResolversfTheta, traceName = 'Padestal', title="Elevation", "Time [s]", "Angle [deg]");
-  
-  addLimitLine(pl, 0, 0, limEl[0]);
-  addLimitLine(pl, 0, 0, limEl[1]);
+  const results = [];
+  results.push(
+    {
+      parameter: 'Elevation Padestal Min. Angle',
+      value1: min(rows["inWS_SensorsstResolversfTheta"]),
+      successCriteria: min([limits.LimitEl1, limits.LimitEl2]),
+      successMethod: 'bigger'
+    },
+    {
+      parameter: 'Elevation Padestal Max. Angle',
+      value1: max(rows["inWS_SensorsstResolversfTheta"]),
+      successCriteria: max([limits.LimitEl1, limits.LimitEl2]),
+      successMethod: 'smaller'
+    }
+  );
+  drawTableOneCol(results);
 
+  const pl = createPlotlyTable(1, 1, 'plot-area');
+
+  plot(pl, 0, 0, rows.time, rows.padestalAimCmdEl, traceName = 'EOD', title = "Elevation", "Time [s]", "Angle [deg]");
+  plot(pl, 0, 0, rows.time, rows.inWS_SensorsstResolversfTheta, traceName = 'Padestal', title = "Elevation", "Time [s]", "Angle [deg]");
+
+  addLimitLine(pl, 0, 0, edgeEl[0], 'dash');
+  addLimitLine(pl, 0, 0, edgeEl[1], 'dash');
+  addLimitLinesIfNear(pl, 0, 0, rows.inWS_SensorsstResolversfTheta, limits.LimitEl1, limits.LimitEl2);
 }
 
 
 function slv2msl_cross() {
   cleanUp();
 
-  const pl = createPlotlyTable(2,2, 'plot-area');
+  const results = [
+    { parameter: 'Maximal Missile Eye Angle', value1: maxAbs(rows.inLEUfMissile_RelAngle_Tr_M), value2: maxAbs(rows.inLEUfMissile_RelAngle_El_M) + 15, successCriteria: 6 }
+  ];
+  drawTable(results);
 
-  plot(pl, 0, 0, rows.time, rows.inLEUfMissile_RelAngle_Tr_M, traceName = 'Missile Eye', title="Traverse<br>Missile Eye", "", "Angle [deg]");
-  plot(pl, 0, 0, rows.time, rows.CpCmd_Tr, traceName = 'WS Rate / Cp', title="Traverse<br>Missile Eye", "", "Angle [deg]");
+  const pl = createPlotlyTable(2, 2, 'plot-area');
 
-  plot(pl, 0, 1, rows.time, rows.inLEUfMissile_RelAngle_El_M, traceName = 'Missile Eye', title="Elevation<br>Missile Eye", "", "Angle [deg]");
-  plot(pl, 0, 1, rows.time, rows.CpCmd_El, traceName = 'WS Rate / Cp', title="Elevation<br>Missile Eye", "", "Angle [deg]");
+  plot(pl, 0, 0, rows.time, rows.inLEUfMissile_RelAngle_Tr_M, traceName = 'Missile Eye', title = "Traverse<br>Missile Eye", "", "Angle [deg]");
+  //plot(pl, 0, 0, rows.time, rows.CpCmd_Tr, traceName = 'WS Rate / Cp', title="Traverse<br>Missile Eye", "", "Angle [deg]");
 
-  plot(pl, 1, 0, rows.time, rows.inWS_SensorsstResolversfPsi, traceName = 'Padestal', title="Padestal", "Time [s]", "Angle [deg]");
-  plot(pl, 1, 1, rows.time, rows.inWS_SensorsstResolversfTheta, traceName = 'Padestal', title="Padestal", "Time [s]", "Angle [deg]");
+  plot(pl, 0, 1, rows.time, rows.inLEUfMissile_RelAngle_El_M, traceName = 'Missile Eye', title = "Elevation<br>Missile Eye", "", "Angle [deg]");
+  //plot(pl, 0, 1, rows.time, rows.CpCmd_El, traceName = 'WS Rate / Cp', title="Elevation<br>Missile Eye", "", "Angle [deg]");
+
+  plot(pl, 1, 0, rows.time, rows.inWS_SensorsstResolversfPsi, traceName = 'Padestal', title = "Padestal", "Time [s]", "Angle [deg]");
+  plot(pl, 1, 1, rows.time, rows.inWS_SensorsstResolversfTheta, traceName = 'Padestal', title = "Padestal", "Time [s]", "Angle [deg]");
 }
 
 
 function slv2msl_squint() {
   cleanUp();
+  const limits = getLimits();
 
-  limTr = [maxNegative(rows["inWS_SensorsstResolversfPsi"]), minPositive(rows["inWS_SensorsstResolversfPsi"])];
-  limEl = [Math.min(...rows["inWS_SensorsstResolversfTheta"]), Math.max(...rows["inWS_SensorsstResolversfTheta"])]
-  console.log(limTr);
-  console.log(limEl);
+  edgeTr = [maxNegative(rows["inWS_SensorsstResolversfPsi"]), minPositive(rows["inWS_SensorsstResolversfPsi"])];
+  edgeEl = [Math.min(...rows["inWS_SensorsstResolversfTheta"]), Math.max(...rows["inWS_SensorsstResolversfTheta"])]
 
-  const pl = createPlotlyTable(2,2, 'plot-area');
+  /*const results = [
+    { parameter: 'Traverse Padestal Min. Angle', value1: edgeTr[0]*r2d, successCriteria: min( [limits.LimitTr1, limits.LimitTr2] ), successMethod: 'smaller' }, 
+    { parameter: 'Traverse Padestal Max. Angle', value1: edgeTr[1]*r2d, successCriteria: max([limits.LimitTr1, limits.LimitTr2]), successMethod: 'bigger' }, 
+    { parameter: 'Elevation Padestal Min. Angle', value1: min(rows["inWS_SensorsstResolversfTheta"]), successCriteria: min([limits.LimitEl1, limits.LimitEl2]), successMethod: 'bigger' }, 
+    { parameter: 'Elevation Padestal Max. Angle', value1: max(rows["inWS_SensorsstResolversfTheta"]), successCriteria: max([limits.LimitEl1, limits.LimitEl2]), successMethod: 'smaller' }
+  ];*/
 
-  plot(pl, 0, 0, rows.time, rows.inLEUfMissile_RelAngle_Tr_M, traceName = 'Missile Eye', title="Traverse<br>Missile Eye", "", "Angle [deg]");
-  plot(pl, 0, 1, rows.time, rows.inLEUfMissile_RelAngle_El_M, traceName = 'Missile Eye', title="Elevation<br>Missile Eye", "", "Angle [deg]");
+  const results = [];
+  if (edgeTr[0] < 0) {
+    results.push({
+      parameter: 'Traverse Padestal Min. Angle',
+      value1: edgeTr[0] * r2d,
+      successCriteria: min([limits.LimitTr1, limits.LimitTr2]),
+      successMethod: 'smaller'
+    });
+  }
+  if (edgeTr[1] > 0) {
+    results.push({
+      parameter: 'Traverse Padestal Max. Angle',
+      value1: edgeTr[1] * r2d,
+      successCriteria: max([limits.LimitTr1, limits.LimitTr2]),
+      successMethod: 'bigger'
+    });
+  }
+  results.push(
+    {
+      parameter: 'Elevation Padestal Min. Angle',
+      value1: min(rows["inWS_SensorsstResolversfTheta"]),
+      successCriteria: min([limits.LimitEl1, limits.LimitEl2]),
+      successMethod: 'bigger'
+    },
+    {
+      parameter: 'Elevation Padestal Max. Angle',
+      value1: max(rows["inWS_SensorsstResolversfTheta"]),
+      successCriteria: max([limits.LimitEl1, limits.LimitEl2]),
+      successMethod: 'smaller'
+    }
+  );
+  drawTableOneCol(results);
 
-  plot(pl, 1, 0, rows.time, rows.inWS_SensorsstResolversfPsi, traceName = 'Padestal', title="Padestal Limit:<br>" + limTr, "Time [s]", "Angle [deg]");
-  plot(pl, 1, 1, rows.time, rows.inWS_SensorsstResolversfTheta, traceName = 'Padestal', title="Padestal Limit:<br>" + limEl, "Time [s]", "Angle [deg]");
+  titTr = edgeTr.map(val => (val*r2d).toFixed(1)+'°');
+  titEl = edgeEl.map(val => (val*r2d).toFixed(1)+'°')
+  if (titTr[0] === titTr[1])
+    titTr = titTr[0];
 
-  addLimitLine(pl, 1, 0, limTr[0]);
-  addLimitLine(pl, 1, 0, limTr[1]);
-  addLimitLine(pl, 1, 1, limEl[0]);
-  addLimitLine(pl, 1, 1, limEl[1]);
+  const pl = createPlotlyTable(2, 2, 'plot-area');
+
+  plot(pl, 0, 0, rows.time, rows.inLEUfMissile_RelAngle_Tr_M, traceName = 'Missile Eye', title = "Traverse<br>Missile Eye", "", "Angle [deg]");
+  plot(pl, 0, 1, rows.time, rows.inLEUfMissile_RelAngle_El_M, traceName = 'Missile Eye', title = "Elevation<br>Missile Eye", "", "Angle [deg]");
+
+  plot(pl, 1, 0, rows.time, rows.inWS_SensorsstResolversfPsi, traceName = 'Padestal', title = "Padestal Measured Limit:<br>" + titTr, "Time [s]", "Angle [deg]");
+  plot(pl, 1, 1, rows.time, rows.inWS_SensorsstResolversfTheta, traceName = 'Padestal', title = "Padestal Measured Limit:<br>" + titEl, "Time [s]", "Angle [deg]");
+
+  addLimitLine(pl, 1, 0, edgeTr[0], 'dash');
+  addLimitLine(pl, 1, 0, edgeTr[1], 'dash');
+  addLimitLine(pl, 1, 1, edgeEl[0], 'dash');
+  addLimitLine(pl, 1, 1, edgeEl[1], 'dash');
+
+  addLimitLinesIfNear(pl, 1, 0, rows.inWS_SensorsstResolversfPsi, limits.LimitTr1, limits.LimitTr2);
+  addLimitLinesIfNear(pl, 1, 1, rows.inWS_SensorsstResolversfTheta, limits.LimitEl1, limits.LimitEl2);
 }
 
 
 function handshake() {
   cleanUp();
 
-  const pl = createPlotlyTable(3,2, 'plot-area');
+  const pl = createPlotlyTable(3, 2, 'plot-area');
 
-  plot(pl, 0, 0, rows.time, rows.padestalAimCmdTr, traceName = 'EOD', title="Traverse<br>EOD & Padestal Position", "", "Angle [deg]");
-  plot(pl, 0, 0, rows.time, rows.inWS_SensorsstResolversfPsi, traceName = 'Padestal', title="Traverse<br>EOD & Padestal Position", "", "Angle [deg]");
+  plot(pl, 0, 0, rows.time, rows.padestalAimCmdTr, traceName = 'EOD', title = "Traverse<br>EOD & Padestal Position", "", "Angle [deg]");
+  plot(pl, 0, 0, rows.time, rows.inWS_SensorsstResolversfPsi, traceName = 'Padestal', title = "Traverse<br>EOD & Padestal Position", "", "Angle [deg]");
 
-  plot(pl, 0, 1, rows.time, rows.padestalAimCmdEl, traceName = 'EOD', title="Elevation<br>EOD & Padestal Position", "", "Angle [deg]");
-  plot(pl, 0, 1, rows.time, rows.inWS_SensorsstResolversfTheta, traceName = 'Padestal', title="Elevation<br>EOD & Padestal Position", "", "Angle [deg]");
+  plot(pl, 0, 1, rows.time, rows.padestalAimCmdEl, traceName = 'EOD', title = "Elevation<br>EOD & Padestal Position", "", "Angle [deg]");
+  plot(pl, 0, 1, rows.time, rows.inWS_SensorsstResolversfTheta, traceName = 'Padestal', title = "Elevation<br>EOD & Padestal Position", "", "Angle [deg]");
 
-  plot(pl, 1, 0, rows.time, rows.inLEUfMissile_RelAngle_Tr_M, traceName = 'Missile Eye', title="Missile Eye", "", "Angle [deg]", color=null, showLeg = false);
-  plot(pl, 1, 1, rows.time, rows.inLEUfMissile_RelAngle_El_M, traceName = 'Missile Eye', title="Missile Eye", "", "Angle [deg]", color=null, showLeg = false);
+  plot(pl, 1, 0, rows.time, rows.inLEUfMissile_RelAngle_Tr_M, traceName = 'Missile Eye', title = "Missile Eye", "", "Angle [deg]", color = null, showLeg = false);
+  plot(pl, 1, 1, rows.time, rows.inLEUfMissile_RelAngle_El_M, traceName = 'Missile Eye', title = "Missile Eye", "", "Angle [deg]", color = null, showLeg = false);
 
-  plot(pl, 2, 0, rows.time, rows.outWsCmdstTraversePosCmd, traceName = 'WS Cmd', title="Padestal Command", "Time [s]", "Angle [deg]", color=null, showLeg = false);
-  plot(pl, 2, 1, rows.time, rows.outWsCmdstElevationPosCmd, traceName = 'WS Cmd', title="Padestal Command", "Time [s]", "Angle [deg]", color=null, showLeg = false);
+  plot(pl, 2, 0, rows.time, rows.outWsCmdstTraversePosCmd, traceName = 'WS Cmd', title = "Padestal Command", "Time [s]", "Angle [deg]", color = null, showLeg = false);
+  plot(pl, 2, 1, rows.time, rows.outWsCmdstElevationPosCmd, traceName = 'WS Cmd', title = "Padestal Command", "Time [s]", "Angle [deg]", color = null, showLeg = false);
 }
 
 
 function checkBits() {
   cleanUp();
 
-  const pl = createPlotlyTable(4,2, 'plot-area');
+  const pl = createPlotlyTable(4, 2, 'plot-area');
 
-  plot(pl, 0, 0, rows.time, rows.outWsCmdstTraversePosCmd, traceName = 'Padestal', title="Traverse<br>Padestal Angle", "", "Angle [deg]", color=null, showLeg = false);
-  plot(pl, 0, 1, rows.time, rows.outWsCmdstElevationPosCmd, traceName = 'Padestal', title="Elevation<br>Padestal Angle", "", "Angle [deg]", color=null, showLeg = false);
+  plot(pl, 0, 0, rows.time, rows.outWsCmdstTraversePosCmd, traceName = 'Padestal', title = "Traverse<br>Padestal Angle", "", "Angle [deg]", color = null, showLeg = false);
+  plot(pl, 0, 1, rows.time, rows.outWsCmdstElevationPosCmd, traceName = 'Padestal', title = "Elevation<br>Padestal Angle", "", "Angle [deg]", color = null, showLeg = false);
 
-  plot(pl, 1, 0, rows.time, rows.outBITAimError_TR, traceName = 'BITAimError', title="Aim Error BIT", "", "", color=null, showLeg = false, mode='markers');
-  plot(pl, 1, 1, rows.time, rows.outBITAimError_EL, traceName = 'BITAimError', title="Aim Error BIT", "", "", color=null, showLeg = false, mode='markers');
+  plot(pl, 1, 0, rows.time, rows.outBITAimError_TR, traceName = 'BITAimError', title = "Aim Error BIT", "", "", color = null, showLeg = false, mode = 'markers');
+  plot(pl, 1, 1, rows.time, rows.outBITAimError_EL, traceName = 'BITAimError', title = "Aim Error BIT", "", "", color = null, showLeg = false, mode = 'markers');
 
-  plot(pl, 2, 0, rows.time, rows.outBITNoMovement_TR, traceName = 'BITNoMovement', title="No Movement BIT", "", "", color=null, showLeg = false, mode='markers');
-  plot(pl, 2, 1, rows.time, rows.outBITNoMovement_EL, traceName = 'BITNoMovement', title="No Movement BIT", "", "", color=null, showLeg = false, mode='markers');
+  plot(pl, 2, 0, rows.time, rows.outBITNoMovement_TR, traceName = 'BITNoMovement', title = "No Movement BIT", "", "", color = null, showLeg = false, mode = 'markers');
+  plot(pl, 2, 1, rows.time, rows.outBITNoMovement_EL, traceName = 'BITNoMovement', title = "No Movement BIT", "", "", color = null, showLeg = false, mode = 'markers');
 
-  plot(pl, 3, 0, rows.time, rows.outPosCmdValid, traceName = 'PosCmdValid', title="Pos Cmd Valid", "Time [s]", "", color=null, showLeg = false, mode='markers');
-  plot(pl, 3, 1, rows.time, rows.outPosCmdValid, traceName = 'PosCmdValid', title="Pos Cmd Valid", "Time [s]", "", color=null, showLeg = false, mode='markers');
+  plot(pl, 3, 0, rows.time, rows.outPosCmdValid, traceName = 'PosCmdValid', title = "Pos Cmd Valid", "Time [s]", "", color = null, showLeg = false, mode = 'markers');
+  plot(pl, 3, 1, rows.time, rows.outPosCmdValid, traceName = 'PosCmdValid', title = "Pos Cmd Valid", "Time [s]", "", color = null, showLeg = false, mode = 'markers');
 
-  plotlyTableToDiscrete(pl.slice(1,8));
+  plotlyTableToDiscrete(pl.slice(1, 8));
 }
 
 // Old polts functions
@@ -715,8 +1010,8 @@ function plotTraces(traces, sp_r = 2, sp_c = 1) {
       columns: sp_c,
       pattern: 'coupled',
     },
-    yaxis: {title: 'Y Axis 1'},
-    yaxis2: {title: 'Y Axis 2'},
+    yaxis: { title: 'Y Axis 1' },
+    yaxis2: { title: 'Y Axis 2' },
     annotation: [
       {
         xref: 'paper',
@@ -745,13 +1040,16 @@ function plotTraces(traces, sp_r = 2, sp_c = 1) {
 
 function processData() {
   rows["padestalAimCmdTr"] = rows["outAimingAlgDebugOutfSpare5"];
-  rows["padestalAimCmdEl"] = plus( rows["outAimingAlgDebugOutfSpare6"], 15*d2r );
+  rows["padestalAimCmdEl"] = plus(rows["outAimingAlgDebugOutfSpare6"], 15 * d2r);
 
   rows["padestalAimErrTr"] = minusArrays(rows["outAimingAlgDebugOutfSpare5"], rows["inWS_SensorsstResolversfPsi"]);
-  rows["padestalAimErrEl"] = plus( minusArrays(rows["outAimingAlgDebugOutfSpare6"], rows["inWS_SensorsstResolversfTheta"]), 15*d2r);
+  rows["padestalAimErrEl"] = plus(minusArrays(rows["outAimingAlgDebugOutfSpare6"], rows["inWS_SensorsstResolversfTheta"]), 15 * d2r);
 
-  rows["CpCmd_Tr"] = mult( derivative( rows["inWS_SensorsstResolversfPsi"] ), 0.5 );
-  rows["CpCmd_El"] = plus( mult( derivative( rows["inWS_SensorsstResolversfTheta"] ), 0.5 ), -15*d2r );
+  rows["totalAimErrTr"] = minusArrays(rows["padestalAimErrTr"], rows["inLEUfMissile_RelAngle_Tr_M"]);
+  rows["totalAimErrEl"] = plus(minusArrays(rows["padestalAimErrEl"], rows["inLEUfMissile_RelAngle_El_M"]), -15 * d2r);
+
+  rows["CpCmd_Tr"] = mult(derivative(rows["inWS_SensorsstResolversfPsi"]), 0.5);
+  rows["CpCmd_El"] = plus(mult(derivative(rows["inWS_SensorsstResolversfTheta"]), 0.5), -15 * d2r);
 }
 
 
@@ -760,13 +1058,16 @@ function cleanUp() {
     var explenation_text = document.getElementById("explenation_text");
     explenation_text.style.display = "none";
 
-    let containers = document.getElementsByClassName("container1");
-    for (var i = containers.length - 1; i >= 0; i--) {
-      containers[i].remove();
-    };
-    c = document.getElementById("xaxis_dropdown").children;
-    c[0].remove();
+    const table = document.getElementById('resultsTable');
+    // Remove any existing table in the container
+    while (table.firstChild) {
+      table.removeChild(table.firstChild);
+    }
+
   } catch (error) { };
+
+
+
 }
 
 function menuItemExecute(caller, action) {
@@ -940,8 +1241,17 @@ function relativeTime() {
 }
 
 function markDataTips() {
-  var myPlot = document.getElementById('plot');
 
+  /*const container = document.getElementById('plot-area');
+  const children = container.querySelectorAll('.plot-container');
+
+  children.forEach(child => {
+    // Do something with each child
+    //console.log(child);
+
+    try{
+  //var myPlot = document.getElementById('plot-area');
+  myPlot = child;
   myPlot.on('plotly_click', function (data) {
     var pts = '';
     for (var i = 0; i < data.points.length; i++) {
@@ -957,9 +1267,11 @@ function markDataTips() {
       annotations = plot.layout.annotations || [];
       annotations.push(annotation);
 
-      Plotly.relayout('plot', { annotations: annotations })
+      Plotly.relayout('plot-area', { annotations: annotations })
     }
   });
+} catch {console.log(child)};
+});*/
 }
 
 
@@ -1170,24 +1482,28 @@ let removeMean = (array) => array.map((item, idx, all) => parseFloat(item) - mea
 
 let mean = (array) => array.reduce((a, b) => parseFloat(a) + parseFloat(b)) / array.length;
 
-const derivative = arr => arr.slice(1).map((val, index) => 333*(val - arr[index]));
+const derivative = arr => arr.slice(1).map((val, index) => 333 * (val - arr[index]));
 
 const minPositive = arr => {
   const positives = arr.filter(num => num > 0);
   return positives.length > 0 ? Math.min(...positives) : Math.max(...arr);
 };
 
+let maxAbs = (arr) => Math.max(...arr.map(Math.abs));
 const maxNegative = arr => {
   const negatives = arr.filter(num => num < 0);
   return negatives.length > 0 ? Math.max(...negatives) : Math.min(...arr);
 };
+
+let min = (arr) => r2d * Math.min(...arr);
+let max = (arr) => r2d * Math.max(...arr);
 
 //const minPositive = arr => Math.min(...arr.filter(num => num > 0));   // the minimum of only the positive numbers (closest to zero)
 //const maxNegative = arr => Math.max(...arr.filter(num => num < 0));   // the maximum of only the negtive numbers (closest to zero)
 
 let strClean = (str) => str.replace(/[^a-zA-Z0-9 ]/g, "");
 
-let lastVal = (arr) => (parseFloat(arr.slice(-1)[0])*r2d).toFixed(1);
+let lastVal = (arr) => (parseFloat(arr.slice(-1)[0]) * r2d);
 
 let r2d = 180 / 3.1416;
 let d2r = 3.1416 / 180;
