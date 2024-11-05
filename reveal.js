@@ -50,11 +50,11 @@ function readFile(file) {
       for (var i = startIdx; i < resultlines.length; i++) {
         var tLine = parseLine(resultlines[i]);
         //if (!isNaN(tLine[0])) {
-        if (tLine.length == header.length) {
+        //if (tLine.length == header.length) {
           for (var j = 0; j < header.length; j++) {
             rows[header[j]].push(tLine[j]);
           }
-        }
+        //}
       }
 
       //processData(rows);
