@@ -49,12 +49,12 @@ function readFile(file) {
       rows = defineObj(header);
       for (var i = startIdx; i < resultlines.length; i++) {
         var tLine = parseLine(resultlines[i]);
-        //if (!isNaN(tLine[0])) {
+        if (tLine.length >= header.length) {
         //if (tLine.length == header.length) {
           for (var j = 0; j < header.length; j++) {
             rows[header[j]].push(tLine[j]);
           }
-        //}
+        }
       }
 
       //processData(rows);
@@ -80,7 +80,9 @@ function readFile(file) {
           'inWS_SensorsstGyrofPsi', 'inWS_SensorsstGyrofTheta', 'inWS_SensorsstResolversfPsi', 'inWS_SensorsstResolversfTheta', 'outMissileActivationBit', 'outPosCmdValid',
           'outAimingAlgDebugOutfSpare1', 'outAimingAlgDebugOutfSpare2', 'outAimingAlgDebugOutfSpare3', 'outAimingAlgDebugOutfSpare4', 'outAimingAlgDebugOutfSpare5', 'outAimingAlgDebugOutfSpare6',
           'outMissileCmdElAngleCmd', 'outMissileCmdTrAngleCmd', 'outWsCmdstElevationPosCmd', 'outWsCmdstElevationTrackerRate', 'outWsCmdstTraversePosCmd', 'outWsCmdstTraverseTrackerRate',
-          'outBITAimError_EL', 'outBITAimError_TR', 'outBITNoMovement_EL', 'outBITNoMovement_TR'],
+          'outBITAimError_EL', 'outBITAimError_TR', 'outBITNoMovement_EL', 'outBITNoMovement_TR', 'outMslEyeErrYaw', 'outMslEyeErrPitch', 
+          'outFlatnessCorrValid', 'outFlatnessCorrAmp', 'outFlatnessCorrOffset', 'outFlatnessCorrPhase',
+        'FlatnessAlgValid', 'FlatnessAlgAmp', 'FlatnessAlgOffset', 'FlatnessAlgPhase'],
         startIdx: 2
       }
 
