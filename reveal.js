@@ -1041,6 +1041,7 @@ function plotTraces(traces, sp_r = 2, sp_c = 1) {
 
 
 function processData() {
+  rows["time"] = mult(removeFirst(rows["time"]),0.001);
   rows["padestalAimCmdTr"] = rows["outAimingAlgDebugOutfSpare5"];
   rows["padestalAimCmdEl"] = plus(rows["outAimingAlgDebugOutfSpare6"], 15 * d2r);
 
