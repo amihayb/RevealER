@@ -562,7 +562,7 @@ function jump2EOD() {
   const results = [
     { parameter: 'Total Aim Error', value1: lastVal(rows.totalAimErrTr), value2: lastVal(rows.totalAimErrEl), successCriteria: 0.5 },
     { parameter: 'Padestal Aim Error', value1: lastVal(rows.padestalAimErrTr), value2: lastVal(rows.padestalAimErrEl), successCriteria: 1 },
-    { parameter: 'Missile Eye Angle', value1: lastVal(rows.inLEUfMissile_RelAngle_Tr_M), value2: lastVal(rows.inLEUfMissile_RelAngle_El_M) + 15, successCriteria: 6 }
+    { parameter: 'Missile Eye Angle', value1: lastVal(rows.inLEUfMissile_RelAngle_Tr_M), value2: lastVal(rows.inLEUfMissile_RelAngle_El_M), successCriteria: 6 }
   ];
   drawTable(results);
 
@@ -586,7 +586,7 @@ function eod_cross() {
   const results = [
     { parameter: 'Maximal Total Aim Error', value1: maxAbs(rows.totalAimErrTr), value2: maxAbs(rows.totalAimErrEl), successCriteria: 1 },
     { parameter: 'Maximal Padestal Aim Error', value1: maxAbs(rows.padestalAimErrTr), value2: maxAbs(rows.padestalAimErrEl), successCriteria: 6 },
-    { parameter: 'Maximal Missile Eye Angle', value1: maxAbs(rows.inLEUfMissile_RelAngle_Tr_M), value2: maxAbs(rows.inLEUfMissile_RelAngle_El_M) + 15, successCriteria: 6 }
+    { parameter: 'Maximal Missile Eye Angle', value1: maxAbs(rows.inLEUfMissile_RelAngle_Tr_M), value2: maxAbs(rows.inLEUfMissile_RelAngle_El_M), successCriteria: 6 }
   ];
   drawTable(results);
 
@@ -711,7 +711,7 @@ function slv2msl_cross() {
   cleanUp();
 
   const results = [
-    { parameter: 'Maximal Missile Eye Angle', value1: maxAbs(rows.inLEUfMissile_RelAngle_Tr_M), value2: maxAbs(rows.inLEUfMissile_RelAngle_El_M) + 15, successCriteria: 6 }
+    { parameter: 'Maximal Missile Eye Angle', value1: maxAbs(rows.inLEUfMissile_RelAngle_Tr_M), value2: maxAbs(rows.inLEUfMissile_RelAngle_El_M), successCriteria: 6 }
   ];
   drawTable(results);
 
@@ -1047,12 +1047,15 @@ function processData() {
 
   rows["padestalAimErrTr"] = minusArrays(rows["outAimingAlgDebugOutfSpare5"], rows["inWS_SensorsstResolversfPsi"]);
   rows["padestalAimErrEl"] = plus(minusArrays(rows["outAimingAlgDebugOutfSpare6"], rows["inWS_SensorsstResolversfTheta"]), 15 * d2r);
+  //rows["padestalAimErrEl"] = minusArrays(rows["outAimingAlgDebugOutfSpare6"], rows["inWS_SensorsstResolversfTheta"]);
 
   rows["totalAimErrTr"] = minusArrays(rows["padestalAimErrTr"], rows["inLEUfMissile_RelAngle_Tr_M"]);
-  rows["totalAimErrEl"] = plus(minusArrays(rows["padestalAimErrEl"], rows["inLEUfMissile_RelAngle_El_M"]), -15 * d2r);
+  //rows["totalAimErrEl"] = plus(minusArrays(rows["padestalAimErrEl"], rows["inLEUfMissile_RelAngle_El_M"]), -15 * d2r);
+  rows["totalAimErrEl"] = minusArrays(rows["padestalAimErrEl"], rows["inLEUfMissile_RelAngle_El_M"]);
 
   rows["CpCmd_Tr"] = mult(derivative(rows["inWS_SensorsstResolversfPsi"]), 0.5);
   rows["CpCmd_El"] = plus(mult(derivative(rows["inWS_SensorsstResolversfTheta"]), 0.5), -15 * d2r);
+  //rows["CpCmd_El"] = mult(derivative(rows["inWS_SensorsstResolversfTheta"]), 0.5);
 }
 
 
